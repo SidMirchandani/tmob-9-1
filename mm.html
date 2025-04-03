@@ -104,8 +104,9 @@
         background: linear-gradient(90deg, var(--blue-light-10), var(--blue-dark-10));
         border-radius: 10px;
         padding: 15px;
-        max-height: 600px;
+        max-height: 410px;
         overflow-y: auto;
+        margin: 20px 0;
       }
       .chat-box {
         background: linear-gradient(90deg, var(--blue-light-10), var(--blue-dark-10));
@@ -354,23 +355,23 @@
         { name: "EXISTENCE", desc: "Being" },
         { name: "KNOWLEDGE", desc: "Wisdom" }
       ];
-      
+
       // 10 possible locations and 10 activities.
       const locationsList = ["The Hall", "The Garden", "The Chamber", "The Library", "The Kitchen", "The Courtyard", "The Cellar", "The Observatory", "The Studio", "The Workshop"];
       const activitiesList = ["reading", "talking", "meditating", "dancing", "painting", "cooking", "writing", "singing", "exercising", "sleeping"];
-      
+
       const totalRounds = 4;  // 4 interrogation rounds
-      
+
       // Game state: victim (dead), killer, survivors.
       let gameState = {
         victim: null,
         killer: null,
         survivors: []
       };
-      
+
       // Array to hold conversation messages.
       let conversationMessages = [];
-      
+
       const chatBox = document.getElementById("chat-box");
       const suspectsContainer = document.getElementById("suspects-container");
       const accusationButton = document.getElementById("accusation-button");
@@ -382,7 +383,7 @@
       const resultTitle = document.getElementById("result-title");
       const resultMessage = document.getElementById("result-message");
       const restartButton = document.getElementById("restart-button");
-      
+
       // Utility: shuffle an array.
       function shuffle(array) {
         for (let i = array.length - 1; i > 0; i--) {
@@ -391,7 +392,7 @@
         }
         return array;
       }
-      
+
       // Generate an array of 'count' items from list with exactly one duplicate pair if forceDuplicate is true.
       function generateTruthfulAssignments(count, list, forceDuplicate) {
         if (!forceDuplicate) {
@@ -406,7 +407,7 @@
           return result;
         }
       }
-      
+
       // Generate testimonies for one round.
       // truthfulNames: array of truthful suspect names (length = survivors excluding killer).
       function generateRoundTestimonies(roundNumber, truthfulNames) {
@@ -422,32 +423,19 @@
               activity: shuffle(activitiesList.slice())[0]
             });
           }
-        } else {
-          // Round 4: For truthful ones (4 names), force a duplicate pair.
-          let truthfulLocations = generateTruthfulAssignments(4, locationsList, true);
-          let counts = {};
-          truthfulLocations.forEach(loc => { counts[loc] = (counts[loc] || 0) + 1; });
-          let dupLocation = null;
-          for (let loc in counts) {
-            if (counts[loc] === 2) { dupLocation = loc; break; }
-          }
+        } else { // Round 4 - corrected logic
+          let truthfulLocations = shuffle(locationsList.slice()).slice(0, truthfulNames.length); 
+          let remainingLocations = locationsList.filter(loc => !truthfulLocations.includes(loc));
+          let killerLocation = shuffle(remainingLocations)[0];
+
           truthfulNames.forEach((name, i) => {
-            testimonies.push({
-              sender: name,
-              location: truthfulLocations[i],
-              activity: shuffle(activitiesList.slice())[0]
-            });
+            testimonies.push({ sender: name, location: truthfulLocations[i], activity: shuffle(activitiesList)[0] });
           });
-          // Force killer's testimony to match the duplicate, making a triple.
-          testimonies.push({
-            sender: gameState.killer,
-            location: dupLocation,
-            activity: shuffle(activitiesList.slice())[0]
-          });
+          testimonies.push({ sender: gameState.killer, location: killerLocation, activity: shuffle(activitiesList)[0] });
         }
         return shuffle(testimonies);
       }
-      
+
       // Build full conversation messages with round headers.
       function buildConversation() {
         conversationMessages = [];
@@ -471,7 +459,7 @@
           text: "Interrogation over. Who do you accuse?"
         });
       }
-      
+
       // Display conversation in the chat box with uniform delay.
       function displayConversation() {
         let index = 0;
@@ -484,7 +472,7 @@
         }
         showNext();
       }
-      
+
       // Add a message to the chat box.
       function addMessage(sender, text) {
         const msg = document.createElement("div");
@@ -494,7 +482,7 @@
         chatBox.appendChild(msg);
         chatBox.scrollTop = chatBox.scrollHeight;
       }
-      
+
       // Populate suspect cards.
       function populateSuspects() {
         suspectsContainer.innerHTML = "";
@@ -508,23 +496,23 @@
                             <div class="suspect-buttons">
                               <button class="suspect-button notes-button" onclick="addNote('${character.name}')">&#9998;</button>
                               <button class="suspect-button eliminate-button" onclick="toggleEliminate('${character.name}')">&#10006;</button>
-                            </div>`;
+      </div>`;
           suspectsContainer.appendChild(card);
         });
       }
-      
+
       // Note functionality.
       function addNote(name) {
         let note = prompt("Add note for " + name + ":");
         if (note) alert(name + " note: " + note);
       }
-      
+
       // Toggle elimination (cross out) functionality.
       function toggleEliminate(name) {
         const card = document.getElementById("suspect-" + name);
         card.classList.toggle("eliminated");
       }
-      
+
       // Initialize game: choose victim, killer, survivors; build conversation.
       function initGame() {
         // Randomly choose victim.
@@ -546,7 +534,7 @@
         buildConversation();
         displayConversation();
       }
-      
+
       // Accusation functionality.
       accusationButton.addEventListener("click", () => {
         accusationModal.style.display = "flex";
@@ -560,7 +548,7 @@
         accusationModal.style.display = "none";
         makeAccusation(suspect);
       });
-      
+
       function makeAccusation(name) {
         addMessage("narrator", "You accuse " + name + ".");
         setTimeout(() => {
@@ -576,17 +564,17 @@
           resultModal.style.display = "flex";
         }, 1000);
       }
-      
+
       restartButton.addEventListener("click", () => {
         resultModal.style.display = "none";
         initGame();
       });
-      
+
       window.onclick = (e) => {
         if (e.target === accusationModal) accusationModal.style.display = "none";
         if (e.target === resultModal) resultModal.style.display = "none";
       };
-      
+
       window.onload = initGame;
     </script>
   </body>
