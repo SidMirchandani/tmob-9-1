@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>The Brahman Memory Game</title>
+    <title>The Mystery of Brahman - Memory Game</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
       :root {
@@ -14,6 +14,75 @@
         --correct: #a4f3a4;
         --incorrect: #f3a4a4;
         --neutral: #f3e1a4;
+      }
+      /* Nav Bar Styles */
+      .navbar {
+        margin: 10px auto 20px; /* Use auto for left/right margins to center horizontally */
+        max-width: 90%;
+        background: white;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: center;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        border-radius: 10000px;
+      }
+
+      .navbar ul {
+        list-style: none;
+        display: flex;
+        margin: 0;
+        padding: 0;
+      }
+
+      .navbar li {
+        margin: 0 15px;
+        position: relative; /* For the after pseudo-element positioning */
+      }
+
+      .navbar a {
+        color: #333; /* Changed from white for better visibility on white background */
+        font-family: 'Poppins', sans-serif;
+        text-decoration: none;
+        font-weight: 700;
+        padding: 8px 12px;
+        display: block;
+        position: relative;
+        transition: all 0.3s ease;
+      }
+
+      /* Hover effect with underline */
+      .navbar a::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background-color: var(--blue2);
+        transition: width 0.3s ease;
+      }
+
+      .navbar a:hover {
+        color: var(--blue2);
+        transform: translateY(-2px); /* Slight lift effect on hover */
+      }
+
+      .navbar a:hover::after {
+        width: 100%; /* Expand the underline on hover */
+      }
+
+      /* Active/clicked state */
+      .navbar a:active {
+        transform: scale(0.95); /* Slight shrink when clicked */
+      }
+
+      /* Optional: you can add this class via JavaScript when a nav item is the current page */
+      .navbar a.active {
+        color: var(--blue2);
+      }
+
+      .navbar a.active::after {
+        width: 100%;
       }
       body {
         margin: 0;
@@ -280,6 +349,15 @@
       THE BRAHMAN<br>MEMORY GAME
     </div>
     <div class="main">
+      <nav class="navbar">
+        <ul>
+          <li><a href="https://tmob-9-1.vercel.app/">Escape Room</a></li>
+          <li><a href="https://tmob-9-1.vercel.app/a2.html">Memory Game</a></li>
+          <li><a href="https://tmob-9-1.vercel.app/a3.html">Murder Mystery</a></li>
+          <li><a href="https://tmob-9-1.vercel.app/a4.html">Puzzle Chalenge</a></li>
+          <li><a href="https://tmob-9-1.vercel.app/a5.html">Who Said It?</a></li>
+        </ul>
+      </nav>
       <div class="content">
         <div class="rules">
           Rules: Match each concept with its corresponding description. Click on cards to reveal their content and find matching pairs. Challenge yourself with different difficulty levels and themes to deepen your understanding of Brahman philosophy.
