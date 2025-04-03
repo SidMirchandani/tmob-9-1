@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>The Brahman Murder Mystery</title>
+    <title>The Mystery of Brahman - Murder Mystery</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
       :root {
@@ -14,6 +14,75 @@
         --correct: #a4f3a4;
         --incorrect: #f3a4a4;
         --suspect: #f3e1a4;
+      }
+      /* Nav Bar Styles */
+      .navbar {
+        margin: 10px auto 20px; /* Use auto for left/right margins to center horizontally */
+        max-width: 90%;
+        background: white;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: center;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        border-radius: 10000px;
+      }
+
+      .navbar ul {
+        list-style: none;
+        display: flex;
+        margin: 0;
+        padding: 0;
+      }
+
+      .navbar li {
+        margin: 0 15px;
+        position: relative; /* For the after pseudo-element positioning */
+      }
+
+      .navbar a {
+        color: #333; /* Changed from white for better visibility on white background */
+        font-family: 'Poppins', sans-serif;
+        text-decoration: none;
+        font-weight: 700;
+        padding: 8px 12px;
+        display: block;
+        position: relative;
+        transition: all 0.3s ease;
+      }
+
+      /* Hover effect with underline */
+      .navbar a::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background-color: var(--blue2);
+        transition: width 0.3s ease;
+      }
+
+      .navbar a:hover {
+        color: var(--blue2);
+        transform: translateY(-2px); /* Slight lift effect on hover */
+      }
+
+      .navbar a:hover::after {
+        width: 100%; /* Expand the underline on hover */
+      }
+
+      /* Active/clicked state */
+      .navbar a:active {
+        transform: scale(0.95); /* Slight shrink when clicked */
+      }
+
+      /* Optional: you can add this class via JavaScript when a nav item is the current page */
+      .navbar a.active {
+        color: var(--blue2);
+      }
+
+      .navbar a.active::after {
+        width: 100%;
       }
       #accusation-select {
         font-family: 'Poppins';
@@ -38,8 +107,6 @@
         letter-spacing: 2px;
         line-height: 1.1;
         position: relative;
-
-        /* Dotted pattern overlay */
         background-image: 
           radial-gradient(rgba(255, 255, 255, 0.2) 1px, transparent 1px),
           linear-gradient(90deg, var(--blue1), var(--blue2));
@@ -68,11 +135,13 @@
         z-index: 1;
       }
       .rules {
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         font-style: italic;
         font-weight: normal;
         text-align: center;
         margin-bottom: 10px;
+        line-height: 1.3;
+        padding: 0 10px;
       }
       .section-title {
         font-weight: 900;
@@ -118,7 +187,7 @@
         overflow-y: auto;
       }
       .chat-message {
-        margin-bottom: 15px;  /* Uniform spacing */
+        margin-bottom: 15px;
         animation: fadeIn 0.5s ease;
       }
       .character-message {
@@ -238,7 +307,7 @@
         text-align: center;
       }
       .accusation-button {
-        background: linear-gradient(90deg, #f44336, #e91e63);
+        background: linear-gradient(90deg, var(--blue1), var(--blue2));
         color: white;
         border: none;
         padding: 10px 20px;
@@ -300,6 +369,9 @@
           font-size: 2.5rem;
           padding: 60px 20px;
         }
+        .result-message {
+          margin-bottom: 10px;
+        }
       }
     </style>
   </head>
@@ -308,9 +380,21 @@
       THE BRAHMAN<br>MURDER MYSTERY
     </div>
     <div class="main">
+      <nav class="navbar">
+        <ul>
+          <li><a href="https://tmob-9-1.vercel.app/">Escape Room</a></li>
+          <li><a href="https://tmob-9-1.vercel.app/a2.html">Memory Game</a></li>
+          <li><a href="https://tmob-9-1.vercel.app/a3.html">Murder Mystery</a></li>
+          <li><a href="https://tmob-9-1.vercel.app/a4.html">Puzzle Chalenge</a></li>
+          <li><a href="https://tmob-9-1.vercel.app/a5.html">Who Said It?</a></li>
+        </ul>
+      </nav>
       <div class="content">
         <div class="rules">
-          Rules: There are 4 rounds of interrogation. All suspects will share their location and what they were doing at that time. If two or more suspects were in the same location, that perpetually confirms their innocence. In the sidebar, you can write notes on suspects as you progress AND you can cross out suspects in case you can confirm their innocence. Good luck, detective.
+          <strong>The Mystery of Brahman, translated by Juan Mascaró</strong><br><br>
+          Once Bhrigu Varuni sought his father Varuna’s wisdom about the mystery of Brahman – that from which all beings come, by which they live, and to which they return. In his quest through tapas (spiritual prayer), he came to understand that Brahman reveals itself in many forms: Food, Life, Mind, Reason, Knowledge, and Bliss.<br><br>
+          In this mystery, each round you will hear the testimonies of these six aspects. Ask for as many rounds as you desire to gather clues and discern the elusive truth. When you’re ready, accuse the one whose testimony seems out of tune with the eternal harmony.<br><br>
+          In Layman's Terms, you are tasked with finding the KILLER. The killer is the only person that will NEVER be in the same location as any of the other characters. Good Luck!
         </div>
         <div class="game-container">
           <div class="chat-container">
@@ -319,6 +403,7 @@
             </div>
             <div class="accusation-container">
               <button class="accusation-button" id="accusation-button">Accuse</button>
+              <button class="accusation-button" id="another-round-button" style="margin-left:10px;">Another Round</button>
             </div>
           </div>
           <div class="suspects-container" id="suspects-container">
@@ -346,21 +431,19 @@
       </div>
     </div>
     <script>
-      // Six characters total: one victim, five suspects.
+      // Updated characters (the aspects of Brahman)
       const characters = [
-        { name: "UNITY", desc: "Oneness" },
-        { name: "ILLUSION", desc: "Perception" },
-        { name: "TRUTH", desc: "Reality" },
-        { name: "CONSCIOUSNESS", desc: "Awareness" },
-        { name: "EXISTENCE", desc: "Being" },
-        { name: "KNOWLEDGE", desc: "Wisdom" }
+        { name: "Food", desc: "Nourishment of the earth" },
+        { name: "Life", desc: "Essence of vitality" },
+        { name: "Mind", desc: "Seat of consciousness" },
+        { name: "Reason", desc: "Source of logic" },
+        { name: "Knowledge", desc: "Path to wisdom" },
+        { name: "Bliss", desc: "State of joy" }
       ];
 
       // 10 possible locations and 10 activities.
       const locationsList = ["The Hall", "The Garden", "The Chamber", "The Library", "The Kitchen", "The Courtyard", "The Cellar", "The Observatory", "The Studio", "The Workshop"];
       const activitiesList = ["reading", "talking", "meditating", "dancing", "painting", "cooking", "writing", "singing", "exercising", "sleeping"];
-
-      const totalRounds = 4;  // 4 interrogation rounds
 
       // Game state: victim (dead), killer, survivors.
       let gameState = {
@@ -369,12 +452,16 @@
         survivors: []
       };
 
-      // Array to hold conversation messages.
+      // Round counter for infinite rounds.
+      let roundCount = 0;
+
+      // Array to hold conversation messages (if needed).
       let conversationMessages = [];
 
       const chatBox = document.getElementById("chat-box");
       const suspectsContainer = document.getElementById("suspects-container");
       const accusationButton = document.getElementById("accusation-button");
+      const anotherRoundButton = document.getElementById("another-round-button");
       const accusationModal = document.getElementById("accusation-modal");
       const accusationSelect = document.getElementById("accusation-select");
       const cancelAccusation = document.getElementById("cancel-accusation");
@@ -393,7 +480,7 @@
         return array;
       }
 
-      // Generate an array of 'count' items from list with exactly one duplicate pair if forceDuplicate is true.
+      // Generate an array of 'count' items from list with exactly one duplicate pair.
       function generateTruthfulAssignments(count, list, forceDuplicate) {
         if (!forceDuplicate) {
           return shuffle(list.slice()).slice(0, count);
@@ -409,68 +496,43 @@
       }
 
       // Generate testimonies for one round.
-      // truthfulNames: array of truthful suspect names (length = survivors excluding killer).
+      // truthfulNames: array of truthful suspect names (all survivors except the killer).
       function generateRoundTestimonies(roundNumber, truthfulNames) {
         let testimonies = [];
-        if (roundNumber < totalRounds) {
-          // Rounds 1-3: Generate 5 location values that follow the rule.
-          let overallLocations = generateTruthfulAssignments(5, locationsList, true);
-          let allNames = truthfulNames.concat(gameState.killer); // total 5 names.
-          for (let i = 0; i < allNames.length; i++) {
-            testimonies.push({
-              sender: allNames[i],
-              location: overallLocations[i],
-              activity: shuffle(activitiesList.slice())[0]
-            });
-          }
-        } else { // Round 4 - corrected logic
-          let truthfulLocations = shuffle(locationsList.slice()).slice(0, truthfulNames.length); 
-          let remainingLocations = locationsList.filter(loc => !truthfulLocations.includes(loc));
-          let killerLocation = shuffle(remainingLocations)[0];
+        // Innocents get a duplicate assignment
+        let innocentLocations = generateTruthfulAssignments(truthfulNames.length, locationsList, true);
+        // The killer's location must be unique: choose one not used by innocents.
+        let killerLocation = locationsList.find(loc => !innocentLocations.includes(loc));
 
-          truthfulNames.forEach((name, i) => {
-            testimonies.push({ sender: name, location: truthfulLocations[i], activity: shuffle(activitiesList)[0] });
+        // Assign testimonies for each innocent.
+        truthfulNames.forEach((name, i) => {
+          testimonies.push({
+            sender: name,
+            location: innocentLocations[i],
+            activity: shuffle(activitiesList.slice())[0]
           });
-          testimonies.push({ sender: gameState.killer, location: killerLocation, activity: shuffle(activitiesList)[0] });
-        }
+        });
+
+        // Assign the killer their unique testimony.
+        testimonies.push({
+          sender: gameState.killer,
+          location: killerLocation,
+          activity: shuffle(activitiesList.slice())[0]
+        });
+
         return shuffle(testimonies);
       }
 
-      // Build full conversation messages with round headers.
-      function buildConversation() {
-        conversationMessages = [];
-        for (let r = 1; r <= totalRounds; r++) {
-          conversationMessages.push({
-            sender: "narrator",
-            text: `--- Round ${r} ---`
-          });
-          // Truthful testimonies from survivors (non-killer).
-          let truthful = gameState.survivors.filter(name => name !== gameState.killer);
-          let roundTestimonies = generateRoundTestimonies(r, truthful);
-          roundTestimonies.forEach(t => {
-            conversationMessages.push({
-              sender: t.sender,
-              text: `I was in ${t.location} and I was ${t.activity}.`
-            });
-          });
-        }
-        conversationMessages.push({
-          sender: "narrator",
-          text: "Interrogation over. Who do you accuse?"
+      // Add one round to the conversation.
+      function addRound() {
+        roundCount++;
+        addMessage("narrator", `--- Round ${roundCount} ---`);
+        // Truthful testimonies from survivors (non-killer).
+        let truthful = gameState.survivors.filter(name => name !== gameState.killer);
+        let roundTestimonies = generateRoundTestimonies(roundCount, truthful);
+        roundTestimonies.forEach(t => {
+          addMessage(t.sender, `I was in ${t.location} and I was ${t.activity}.`);
         });
-      }
-
-      // Display conversation in the chat box with uniform delay.
-      function displayConversation() {
-        let index = 0;
-        function showNext() {
-          if (index < conversationMessages.length) {
-            addMessage(conversationMessages[index].sender, conversationMessages[index].text);
-            index++;
-            setTimeout(showNext, 300);
-          }
-        }
-        showNext();
       }
 
       // Add a message to the chat box.
@@ -513,7 +575,7 @@
         card.classList.toggle("eliminated");
       }
 
-      // Initialize game: choose victim, killer, survivors; build conversation.
+      // Initialize game: choose victim, killer, survivors; display suspects; and add the first round.
       function initGame() {
         // Randomly choose victim.
         gameState.victim = characters[Math.floor(Math.random() * characters.length)].name;
@@ -522,6 +584,7 @@
         // Choose killer among survivors.
         gameState.killer = gameState.survivors[Math.floor(Math.random() * gameState.survivors.length)];
         chatBox.innerHTML = "";
+        roundCount = 0;
         populateSuspects();
         // Populate accusation dropdown with survivors.
         accusationSelect.innerHTML = '<option value="">Select suspect</option>';
@@ -531,8 +594,8 @@
           opt.textContent = name;
           accusationSelect.appendChild(opt);
         });
-        buildConversation();
-        displayConversation();
+        // Start with one round.
+        addRound();
       }
 
       // Accusation functionality.
@@ -564,6 +627,9 @@
           resultModal.style.display = "flex";
         }, 1000);
       }
+
+      // "Another Round" button adds one more round.
+      anotherRoundButton.addEventListener("click", addRound);
 
       restartButton.addEventListener("click", () => {
         resultModal.style.display = "none";
