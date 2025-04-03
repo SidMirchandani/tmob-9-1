@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>The Mystery of Brahman - Who Said It?</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --blue1: #00b0cf;
+        --blue2: #6667f4;
+        --blue-light-10: rgba(0, 176, 207, 0.1);
+        --blue-dark-10: rgba(102, 103, 244, 0.1);
+        --correct: #a4f3a4;
+        --incorrect: #f3a4a4;
+      }
+      body {
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
+        background: white;
+        position: relative;
+      }
+      .header {
+        background: linear-gradient(90deg, var(--blue1), var(--blue2));
+        color: white;
+        padding: 100px 20px;
+        text-align: center;
+        font-weight: 900;
+        font-size: 3.5rem;
+        letter-spacing: 2px;
+        line-height: 1.1;
+        position: relative;
+
+        /* Dotted pattern overlay */
+        background-image: 
+          radial-gradient(rgba(255, 255, 255, 0.2) 1px, transparent 1px),
+          linear-gradient(90deg, var(--blue1), var(--blue2));
+        background-size: 10px 10px, cover;
+      }
+
+      .main {
+        background: white;
+        position: relative;
+        padding: 30px 20px;
+        z-index: 0;
+        overflow: hidden;
+      }
+      .main::before {
+        content: '';
+        position: absolute;
+        width: 600px;
+        height: 600px;
+        border-radius: 50%;
+        background: radial-gradient(circle, #a1daff 0%, transparent 50%, transparent 100%);
+        z-index: -1;
+        top: -300px;
+        left: -300px;
+      }
+      .content {
+        position: relative;
+        z-index: 1;
+      }
+      .section-title {
+        font-weight: 900;
+        font-size: 1.5rem;
+        color: black;
+        text-align: center;
+        margin-bottom: 10px;
+      }
+      .section-title::after {
+        content: '';
+        display: block;
+        width: 60px;
+        height: 4px;
+        margin: 10px auto;
+        background: linear-gradient(90deg, var(--blue1), var(--blue2));
+        border-radius: 2px;
+      }
+      .excerpt-box {
+        background: linear-gradient(90deg, var(--blue-light-10), var(--blue-dark-10));
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px auto;
+        max-width: 600px;
+      }
+      .excerpt-box h3 {
+        font-weight: 900;
+        color: black;
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-size: 1.2rem;
+        text-align: center;
+      }
+      .excerpt-box p {
+        font-style: italic;
+        font-weight: 400;
+        color: black;
+        margin: 0;
+        text-align: justify;
+        font-size: 0.8rem;
+      }
+      .quote-box {
+        background-color: #f9f9f9;
+        border-left: 4px solid var(--blue2);
+        padding: 15px 20px;
+        margin: 20px auto;
+        max-width: 600px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      }
+      .quote-text {
+        font-size: 1.1rem;
+        font-style: italic;
+        color: #333;
+        margin-bottom: 20px;
+        line-height: 1.5;
+      }
+      .speaker-options {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+      .speaker-button {
+        padding: 10px 15px;
+        margin: 5px;
+        flex: 1;
+        min-width: 120px;
+        border: 2px solid var(--blue1);
+        background: white;
+        color: var(--blue2);
+        border-radius: 30px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: 'Poppins', sans-serif;
+      }
+      .speaker-button:hover {
+        background: var(--blue-light-10);
+        transform: translateY(-2px);
+      }
+      .speaker-button.selected {
+        background: linear-gradient(90deg, var(--blue1), var(--blue2));
+        color: white;
+        border-color: transparent;
+      }
+      .speaker-button.correct {
+        background: var(--correct);
+        color: #333;
+        border-color: #4CAF50;
+      }
+      .speaker-button.incorrect {
+        background: var(--incorrect);
+        color: #333;
+        border-color: #F44336;
+      }
+
+      .feedback-container {
+        max-width: 600px;
+        margin: 15px auto;
+        border-radius: 8px;
+        overflow: hidden;
+        transform-origin: top;
+        transition: all 0.5s ease;
+        max-height: 0;
+      }
+      .feedback-container.visible {
+        max-height: 200px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      }
+      .feedback-content {
+        padding: 15px;
+        display: flex;
+        align-items: flex-start;
+      }
+      .feedback-correct {
+        background-color: rgba(164, 243, 164, 0.3);
+        border-left: 4px solid var(--correct);
+      }
+      .feedback-incorrect {
+        background-color: rgba(243, 164, 164, 0.3);
+        border-left: 4px solid var(--incorrect);
+      }
+      .feedback-icon {
+        font-size: 1.5rem;
+        margin-right: 10px;
+        display: inline-block;
+        animation: bounce 0.6s ease;
+      }
+      .feedback-text {
+        flex: 1;
+      }
+      .feedback-heading {
+        font-weight: 700;
+        margin-bottom: 5px;
+      }
+      .feedback-explanation {
+        font-size: 0.8rem;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: all 0.4s ease 0.1s;
+      }
+      .feedback-container.visible .feedback-explanation {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .navigation-buttons {
+        display: flex;
+        justify-content: space-between;
+        max-width: 600px;
+        margin: 20px auto;
+      }
+      .nav-button {
+        padding: 8px 15px;
+        border: none;
+        border-radius: 5px;
+        background: linear-gradient(90deg, var(--blue1), var(--blue2));
+        color: white;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        opacity: 0.7;
+        font-family: 'Poppins';
+      }
+      .nav-button:hover {
+        opacity: 1;
+        transform: scale(1.05);
+      }
+      .nav-button:disabled {
+        background: #cccccc;
+        cursor: not-allowed;
+        opacity: 0.5;
+        transform: none;
+      }
+
+      .progress-bar {
+        max-width: 600px;
+        margin: 20px auto;
+        background-color: #e0e0e0;
+        border-radius: 10px;
+        height: 10px;
+        overflow: hidden;
+      }
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--blue1), var(--blue2));
+        width: 0%;
+        transition: width 0.5s ease;
+      }
+      .progress-text {
+        text-align: center;
+        font-size: 0.8rem;
+        color: #666;
+        margin-top: 5px;
+      }
+
+      .game-complete {
+        text-align: center;
+        padding: 20px;
+        max-width: 600px;
+        margin: 20px auto;
+        background: linear-gradient(90deg, rgba(164, 243, 164, 0.3), rgba(102, 103, 244, 0.1));
+        border-radius: 10px;
+        display: none;
+        animation: fadeIn 0.6s ease;
+      }
+      .game-complete h2 {
+        color: var(--blue2);
+        margin-top: 0;
+      }
+      .score-display {
+        font-size: 2rem;
+        font-weight: 900;
+        color: var(--blue2);
+        margin: 15px 0;
+      }
+      .character-info {
+        max-width: 600px;
+        margin: 20px auto;
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      }
+      .character-info h3 {
+        color: var(--blue2);
+        margin-top: 0;
+        text-align: center;
+      }
+      .character-info p {
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+
+      @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+        40% {transform: translateY(-10px);}
+        60% {transform: translateY(-5px);}
+      }
+      @keyframes fadeIn {
+        0% {opacity: 0; transform: translateY(20px);}
+        100% {opacity: 1; transform: translateY(0);}
+      }
+      /* Nav Bar Styles */
+      .navbar {
+        margin: 10px auto 20px; /* Use auto for left/right margins to center horizontally */
+        max-width: 90%;
+        background: white;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: center;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        border-radius: 10000px;
+      }
+
+      .navbar ul {
+        list-style: none;
+        display: flex;
+        margin: 0;
+        padding: 0;
+      }
+
+      .navbar li {
+        margin: 0 15px;
+        position: relative; /* For the after pseudo-element positioning */
+      }
+
+      .navbar a {
+        color: #333; /* Changed from white for better visibility on white background */
+        font-family: 'Poppins', sans-serif;
+        text-decoration: none;
+        font-weight: 700;
+        padding: 8px 12px;
+        display: block;
+        position: relative;
+        transition: all 0.3s ease;
+      }
+
+      /* Hover effect with underline */
+      .navbar a::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background-color: var(--blue2);
+        transition: width 0.3s ease;
+      }
+
+      .navbar a:hover {
+        color: var(--blue2);
+        transform: translateY(-2px); /* Slight lift effect on hover */
+      }
+
+      .navbar a:hover::after {
+        width: 100%; /* Expand the underline on hover */
+      }
+
+      /* Active/clicked state */
+      .navbar a:active {
+        transform: scale(0.95); /* Slight shrink when clicked */
+      }
+
+      /* Optional: you can add this class via JavaScript when a nav item is the current page */
+      .navbar a.active {
+        color: var(--blue2);
+      }
+
+      .navbar a.active::after {
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      THE BRAHMAN<br>WHO SAID IT?
+    </div>
+
+    <div class="main">
+      <nav class="navbar">
+        <ul>
+          <li><a href="https://tmob-9-1.vercel.app/">Escape Room</a></li>
+          <li><a href="https://tmob-9-1.vercel.app/a2.html">Memory Game</a></li>
+          <li><a href="https://tmob-9-1.vercel.app/a3.html">Murder Mystery</a></li>
+          <li><a href="https://tmob-9-1.vercel.app/a4.html">Puzzle Chalenge</a></li>
+          <li><a href="https://tmob-9-1.vercel.app/a5.html">Who Said It?</a></li>
+        </ul>
+      </nav>
+      <div class="content">
+        <div class="section-title">TEST YOUR KNOWLEDGE</div>
+
+        <div class="character-info" id="character-info">
+          <h3>Characters in The Mystery of Brahman</h3>
+          <p><strong>Bhrigu:</strong> A seeker of knowledge, son of Varuna, who embarks on a journey to understand Brahman through spiritual practice (tapas).</p>
+          <p><strong>Varuna:</strong> The father of Bhrigu, who guides his son's spiritual inquiry through cryptic answers and encouragement to practice tapas.</p>
+          <p><strong>Narrator:</strong> The voice that describes the story and explains concepts about Brahman that are not direct quotes from either character.</p>
+        </div>
+
+        <div class="excerpt-box">
+          <h3>THE MYSTERY OF BRAHMAN</h3>
+          <p id="context-text">In this game, you will be shown quotes from The Mystery of Brahman. Your task is to identify who said each quote - was it Bhrigu, Varuna, or the Narrator? Test your understanding of this profound text about the ultimate reality.</p>
+        </div>
+
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <div class="progress-text" id="progress-text">Question 1 of 10</div>
+
+        <div class="quote-box">
+          <div class="quote-text" id="quote-text"></div>
+          <div class="speaker-options">
+            <button class="speaker-button" id="varuna-btn">Varuna</button>
+            <button class="speaker-button" id="bhrigu-btn">Bhrigu</button>
+            <button class="speaker-button" id="narrator-btn">Narrator</button>
+          </div>
+        </div>
+
+        <div class="feedback-container" id="feedback-container">
+          <div class="feedback-content" id="feedback-content">
+            <div class="feedback-icon" id="feedback-icon"></div>
+            <div class="feedback-text">
+              <div class="feedback-heading" id="feedback-heading"></div>
+              <div class="feedback-explanation" id="feedback-explanation"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="navigation-buttons">
+          <button class="nav-button" id="prev-button" disabled>Previous</button>
+          <button class="nav-button" id="next-button" disabled>Next</button>
+        </div>
+
+        <div class="game-complete" id="game-complete">
+          <h2>Game Complete!</h2>
+          <p>You've finished The Mystery of Brahman quiz</p>
+          <div class="score-display" id="final-score">0/10</div>
+          <p id="score-message">Keep studying to improve your understanding!</p>
+          <button class="nav-button" id="restart-button">Play Again</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Game data: quotes and their speakers
+      const gameData = [
+        {
+          quote: "Father, explain to me the mystery of Brahman.",
+          speaker: "Bhrigu",
+          explanation: "This introduces Bhrigu’s spiritual quest as he approaches his father Varuna for knowledge about Brahman."
+        },
+        {
+          quote: "Then his father spoke to him who hears, of the mind that knows, and of the one who sees, of the one who hears, of the mind that knows, and of the one who speaks.",
+          speaker: "Narrator",
+          explanation: "This narrates Varuna’s description of the faculties of perception and cognition as part of Brahman."
+        },
+        {
+          quote: "Seek to know him from whom all beings have come, by whom they all live, and unto whom these all return. He is Brahman.",
+          speaker: "Varuna",
+          explanation: "Varuna guides Bhrigu to seek Brahman by explaining its all-encompassing nature."
+        },
+        {
+          quote: "So Bhrigu went and practiced tapas, spiritual prayer.",
+          speaker: "Narrator",
+          explanation: "This describes Bhrigu beginning his spiritual discipline to understand Brahman."
+        },
+        {
+          quote: "Then he thought that Brahman was the food of the earth: for from earth all beings have come, by food of the earth they all live, and unto the earth they all return.",
+          speaker: "Narrator",
+          explanation: "This is Bhrigu's first realization, associating Brahman with physical sustenance and the earth."
+        },
+        {
+          quote: "Father, explain further to me the mystery of Brahman.",
+          speaker: "Bhrigu",
+          explanation: "Bhrigu returns to his father seeking deeper understanding after his initial insight."
+        },
+        {
+          quote: "Seek to know Brahman by tapas, by prayer, because Brahman is prayer.",
+          speaker: "Varuna",
+          explanation: "Varuna reiterates that spiritual practice is the path to knowledge of Brahman."
+        },
+        {
+          quote: "So Bhrigu went and practiced tapas, spiritual prayer.",
+          speaker: "Narrator",
+          explanation: "Bhrigu continues his discipline as instructed by his father."
+        },
+        {
+          quote: "Then he thought that Brahman was life: for from life all beings have come, by life they all live, and unto life they all return.",
+          speaker: "Narrator",
+          explanation: "Bhrigu arrives at a second insight, identifying Brahman with the life force."
+        },
+        {
+          quote: "Father, explain further to me the mystery of Brahman.",
+          speaker: "Bhrigu",
+          explanation: "Bhrigu seeks further clarification from his father after his second realization."
+        },
+        {
+          quote: "Seek to know Brahman by tapas, by prayer, because Brahman is prayer.",
+          speaker: "Varuna",
+          explanation: "Varuna gives the same spiritual advice, urging deeper contemplation."
+        },
+        {
+          quote: "So Bhrigu went and practiced tapas, spiritual prayer.",
+          speaker: "Narrator",
+          explanation: "Bhrigu once again returns to his practice of spiritual discipline."
+        },
+        {
+          quote: "Then he thought that Brahman was mind: for from mind all beings have come, by mind they all live, and unto mind they all return.",
+          speaker: "Narrator",
+          explanation: "This marks Bhrigu's third insight—seeing Brahman as mind, the source of awareness."
+        },
+        {
+          quote: "Father, explain further to me the mystery of Brahman.",
+          speaker: "Bhrigu",
+          explanation: "Bhrigu returns once more, unsatisfied, looking for a deeper understanding."
+        },
+        {
+          quote: "Seek to know Brahman by tapas, by prayer, because Brahman is prayer.",
+          speaker: "Varuna",
+          explanation: "Varuna patiently reaffirms the same guidance, emphasizing prayer as the path."
+        },
+        {
+          quote: "So Bhrigu went and practiced tapas, spiritual prayer.",
+          speaker: "Narrator",
+          explanation: "Bhrigu resumes his meditative inquiry to uncover further truths."
+        },
+        {
+          quote: "Then he thought that Brahman was reason: for from reason all beings have come, by reason they all live, and unto reason they all return.",
+          speaker: "Narrator",
+          explanation: "Bhrigu's fourth realization equates Brahman with reason, the power of discernment."
+        },
+        {
+          quote: "Father, explain further to me the mystery of Brahman.",
+          speaker: "Bhrigu",
+          explanation: "Bhrigu again asks his father for guidance after contemplating reason as Brahman."
+        },
+        {
+          quote: "Seek to know Brahman by tapas, by prayer, because Brahman is prayer.",
+          speaker: "Varuna",
+          explanation: "Varuna offers the same mantra-like instruction, emphasizing internal spiritual pursuit."
+        },
+        {
+          quote: "So Bhrigu went and practiced tapas, spiritual prayer.",
+          speaker: "Narrator",
+          explanation: "Bhrigu’s persistence continues as he practices tapas one final time."
+        },
+        {
+          quote: "And then he saw that Brahman is joy: FOR FROM JOY ALL BEINGS HAVE COME, BY JOY THEY ALL LIVE, AND UNTO JOY THEY ALL RETURN.",
+          speaker: "Narrator",
+          explanation: "This is Bhrigu’s final and most profound realization—that Brahman is joy, the ultimate truth."
+        },
+        {
+          quote: "This was the vision of Bhrigu Varuni which came from the Highest: and he who sees this vision lives in the Highest.",
+          speaker: "Narrator",
+          explanation: "The narration concludes Bhrigu’s journey, affirming the enlightenment that comes from seeing Brahman as joy."
+        }
+      ]
+
+
+      // Game state
+      let currentQuestion = 0;
+      let score = 0;
+      let questionsAnswered = Array(gameData.length).fill(false);
+      let userAnswers = Array(gameData.length).fill(null);
+
+      // DOM elements
+      const quoteText = document.getElementById("quote-text");
+      const varunaBtn = document.getElementById("varuna-btn");
+      const bhriguBtn = document.getElementById("bhrigu-btn");
+      const narratorBtn = document.getElementById("narrator-btn");
+      const prevButton = document.getElementById("prev-button");
+      const nextButton = document.getElementById("next-button");
+      const progressFill = document.getElementById("progress-fill");
+      const progressText = document.getElementById("progress-text");
+      const feedbackContainer = document.getElementById("feedback-container");
+      const feedbackContent = document.getElementById("feedback-content");
+      const feedbackIcon = document.getElementById("feedback-icon");
+      const feedbackHeading = document.getElementById("feedback-heading");
+      const feedbackExplanation = document.getElementById("feedback-explanation");
+      const gameCompleteEl = document.getElementById("game-complete");
+      const finalScore = document.getElementById("final-score");
+      const scoreMessage = document.getElementById("score-message");
+      const restartButton = document.getElementById("restart-button");
+      const characterInfo = document.getElementById("character-info");
+
+      // Initialize game
+      function initGame() {
+        loadQuestion();
+        updateProgressBar();
+
+        // Add event listeners to speaker buttons
+        varunaBtn.addEventListener("click", () => handleAnswer("Varuna"));
+        bhriguBtn.addEventListener("click", () => handleAnswer("Bhrigu"));
+        narratorBtn.addEventListener("click", () => handleAnswer("Narrator"));
+
+        // Navigation buttons
+        prevButton.addEventListener("click", goToPrevQuestion);
+        nextButton.addEventListener("click", goToNextQuestion);
+
+        // Restart button
+        restartButton.addEventListener("click", restartGame);
+      }
+
+      function loadQuestion() {
+        // Display the current quote
+        quoteText.textContent = gameData[currentQuestion].quote;
+
+        // Reset button states
+        resetButtons();
+
+        // Hide feedback
+        feedbackContainer.classList.remove("visible");
+
+        // Update progress text
+        progressText.textContent = `Question ${currentQuestion + 1} of ${gameData.length}`;
+
+        // If question was already answered, show previous selection
+        if (questionsAnswered[currentQuestion]) {
+          const userAnswer = userAnswers[currentQuestion];
+          const correctAnswer = gameData[currentQuestion].speaker;
+
+          if (userAnswer === "Varuna") {
+            varunaBtn.classList.add(userAnswer === correctAnswer ? "correct" : "incorrect");
+          } else if (userAnswer === "Bhrigu") {
+            bhriguBtn.classList.add(userAnswer === correctAnswer ? "correct" : "incorrect");
+          } else if (userAnswer === "Narrator") {
+            narratorBtn.classList.add(userAnswer === correctAnswer ? "correct" : "incorrect");
+          }
+
+          // If answer was incorrect, also highlight the correct one
+          if (userAnswer !== correctAnswer) {
+            if (correctAnswer === "Varuna") {
+              varunaBtn.classList.add("correct");
+            } else if (correctAnswer === "Bhrigu") {
+              bhriguBtn.classList.add("correct");
+            } else if (correctAnswer === "Narrator") {
+              narratorBtn.classList.add("correct");
+            }
+          }
+
+          // Show feedback
+          showFeedback(userAnswer === correctAnswer, gameData[currentQuestion].explanation);
+
+          // Disable buttons for answered questions
+          disableButtons();
+        }
+
+        // Update navigation buttons
+        updateNavigationButtons();
+      }
+
+      function handleAnswer(speaker) {
+        if (questionsAnswered[currentQuestion]) {
+          return; // Question already answered
+        }
+
+        const correctSpeaker = gameData[currentQuestion].speaker;
+        const isCorrect = speaker === correctSpeaker;
+
+        // Mark question as answered
+        questionsAnswered[currentQuestion] = true;
+        userAnswers[currentQuestion] = speaker;
+
+        // Update score if correct
+        if (isCorrect) {
+          score++;
+        }
+
+        // Highlight selected button
+        if (speaker === "Varuna") {
+          varunaBtn.classList.add(isCorrect ? "correct" : "incorrect");
+        } else if (speaker === "Bhrigu") {
+          bhriguBtn.classList.add(isCorrect ? "correct" : "incorrect");
+        } else if (speaker === "Narrator") {
+          narratorBtn.classList.add(isCorrect ? "correct" : "incorrect");
+        }
+
+        // If incorrect, also highlight the correct answer
+        if (!isCorrect) {
+          if (correctSpeaker === "Varuna") {
+            varunaBtn.classList.add("correct");
+          } else if (correctSpeaker === "Bhrigu") {
+            bhriguBtn.classList.add("correct");
+          } else if (correctSpeaker === "Narrator") {
+            narratorBtn.classList.add("correct");
+          }
+        }
+
+        // Show feedback
+        showFeedback(isCorrect, gameData[currentQuestion].explanation);
+
+        // Disable buttons after answering
+        disableButtons();
+
+        // Update navigation buttons
+        updateNavigationButtons();
+
+        // Update progress bar
+        updateProgressBar();
+
+        // Check if game is complete
+        checkGameCompletion();
+      }
+
+      function resetButtons() {
+        varunaBtn.classList.remove("selected", "correct", "incorrect");
+        bhriguBtn.classList.remove("selected", "correct", "incorrect");
+        narratorBtn.classList.remove("selected", "correct", "incorrect");
+
+        // Enable buttons for unanswered questions
+        varunaBtn.disabled = false;
+        bhriguBtn.disabled = false;
+        narratorBtn.disabled = false;
+      }
+
+      function disableButtons() {
+        varunaBtn.disabled = true;
+        bhriguBtn.disabled = true;
+        narratorBtn.disabled = true;
+      }
+
+      function showFeedback(isCorrect, explanation) {
+        // Reset classes
+        feedbackContainer.className = "feedback-container";
+        feedbackContent.className = "feedback-content";
+
+        if (isCorrect) {
+          feedbackContent.classList.add("feedback-correct");
+          feedbackIcon.textContent = "✓";
+          feedbackHeading.textContent = "Correct!";
+        } else {
+          feedbackContent.classList.add("feedback-incorrect");
+          feedbackIcon.textContent = "✗";
+          feedbackHeading.textContent = "Incorrect";
+        }
+
+        feedbackExplanation.textContent = explanation;
+
+        // Show with animation
+        setTimeout(() => {
+          feedbackContainer.classList.add("visible");
+        }, 300);
+      }
+
+      function updateNavigationButtons() {
+        // Previous button is enabled if not on first question
+        prevButton.disabled = currentQuestion === 0;
+
+        // Next button is enabled if question is answered or if we're viewing a previously answered question
+        nextButton.disabled = !questionsAnswered[currentQuestion];
+
+        // If on last question and it's answered, next should be disabled
+        if (currentQuestion === gameData.length - 1) {
+          nextButton.disabled = true;
+        }
+      }
+
+      function goToPrevQuestion() {
+        if (currentQuestion > 0) {
+          currentQuestion--;
+          loadQuestion();
+          updateProgressBar();
+        }
+      }
+
+      function goToNextQuestion() {
+        if (currentQuestion < gameData.length - 1 && questionsAnswered[currentQuestion]) {
+          currentQuestion++;
+          loadQuestion();
+          updateProgressBar();
+        }
+      }
+
+      function updateProgressBar() {
+        const progress = ((currentQuestion + 1) / gameData.length) * 100;
+        progressFill.style.width = `${progress}%`;
+      }
+
+      function checkGameCompletion() {
+        const allAnswered = questionsAnswered.every(q => q === true);
+
+        if (allAnswered) {
+          // Hide character info when game is complete
+          characterInfo.style.display = "none";
+
+          // Show game complete message
+          gameCompleteEl.style.display = "block";
+
+          // Update final score
+          finalScore.textContent = `${score}/${gameData.length}`;
+
+          // Custom message based on score
+          if (score === gameData.length) {
+            scoreMessage.textContent = "Perfect! You have achieved complete understanding of Brahman!";
+          } else if (score >= Math.floor(gameData.length * 0.8)) {
+            scoreMessage.textContent = "Excellent! Your understanding of Brahman is profound.";
+          } else if (score >= Math.floor(gameData.length * 0.6)) {
+            scoreMessage.textContent = "Good job! You're on the path to understanding Brahman.";
+          } else {
+            scoreMessage.textContent = "Keep practicing tapas to deepen your understanding of Brahman.";
+          }
+        }
+      }
+
+      function restartGame() {
+        // Reset game state
+        currentQuestion = 0;
+        score = 0;
+        questionsAnswered = Array(gameData.length).fill(false);
+        userAnswers = Array(gameData.length).fill(null);
+
+        // Hide game complete message
+        gameCompleteEl.style.display = "none";
+
+        // Show character info again
+        characterInfo.style.display = "block";
+
+        // Reset and load first question
+        loadQuestion();
+        updateProgressBar();
+      }
+
+      // Start the game when page loads
+      initGame();
+    </script>
+  </body>
+</html>
