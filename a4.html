@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>The Mystery of Brahman - Puzzle Challenge</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --blue1: #00b0cf;
+        --blue2: #6667f4;
+        --blue-light-10: rgba(0, 176, 207, 0.1);
+        --blue-dark-10: rgba(102, 103, 244, 0.1);
+        --correct: #a4f3a4;
+        --incorrect: #f3a4a4;
+      }
+      /* Nav Bar Styles */
+      .navbar {
+        margin: 10px auto 20px; /* Use auto for left/right margins to center horizontally */
+        max-width: 90%;
+        background: white;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: center;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        border-radius: 10000px;
+      }
+
+      .navbar ul {
+        list-style: none;
+        display: flex;
+        margin: 0;
+        padding: 0;
+      }
+
+      .navbar li {
+        margin: 0 15px;
+        position: relative; /* For the after pseudo-element positioning */
+      }
+
+      .navbar a {
+        color: #333; /* Changed from white for better visibility on white background */
+        font-family: 'Poppins', sans-serif;
+        text-decoration: none;
+        font-weight: 700;
+        padding: 8px 12px;
+        display: block;
+        position: relative;
+        transition: all 0.3s ease;
+      }
+
+      /* Hover effect with underline */
+      .navbar a::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background-color: var(--blue2);
+        transition: width 0.3s ease;
+      }
+
+      .navbar a:hover {
+        color: var(--blue2);
+        transform: translateY(-2px); /* Slight lift effect on hover */
+      }
+
+      .navbar a:hover::after {
+        width: 100%; /* Expand the underline on hover */
+      }
+
+      /* Active/clicked state */
+      .navbar a:active {
+        transform: scale(0.95); /* Slight shrink when clicked */
+      }
+
+      /* Optional: you can add this class via JavaScript when a nav item is the current page */
+      .navbar a.active {
+        color: var(--blue2);
+      }
+
+      .navbar a.active::after {
+        width: 100%;
+      }
+      /* Force every button to use the Poppins font */
+      button {
+        font-family: 'Poppins', sans-serif;
+      }
+      body {
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
+        background: white;
+        position: relative;
+      }
+      .header {
+        background: linear-gradient(90deg, var(--blue1), var(--blue2));
+        color: white;
+        padding: 100px 20px;
+        text-align: center;
+        font-weight: 900;
+        font-size: 3.5rem;
+        letter-spacing: 2px;
+        line-height: 1.1;
+        position: relative;
+        /* Dotted pattern overlay */
+        background-image: 
+          radial-gradient(rgba(255, 255, 255, 0.2) 1px, transparent 1px),
+          linear-gradient(90deg, var(--blue1), var(--blue2));
+        background-size: 10px 10px, cover;
+      }
+      .main {
+        background: white;
+        position: relative;
+        padding: 30px 20px;
+        z-index: 0;
+        overflow: hidden;
+      }
+      .main::before {
+        content: '';
+        position: absolute;
+        width: 600px;
+        height: 600px;
+        border-radius: 50%;
+        background: radial-gradient(circle, #a1daff 0%, transparent 50%, transparent 100%);
+        z-index: -1;
+        top: -300px;
+        left: -300px;
+      }
+      .content {
+        position: relative;
+        z-index: 1;
+      }
+      .section-title {
+        font-weight: 900;
+        font-size: 1.5rem;
+        color: black;
+        text-align: center;
+        margin-bottom: 10px;
+      }
+      .section-title::after {
+        content: '';
+        display: block;
+        width: 60px;
+        height: 4px;
+        margin: 10px auto;
+        background: linear-gradient(90deg, var(--blue1), var(--blue2));
+        border-radius: 2px;
+      }
+      .excerpt-box {
+        background: linear-gradient(90deg, var(--blue-light-10), var(--blue-dark-10));
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px auto;
+        max-width: 800px;
+      }
+      .excerpt-box h3 {
+        font-weight: 900;
+        color: black;
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-size: 1.2rem;
+        text-align: center;
+      }
+      .excerpt-box p {
+        font-style: italic;
+        font-weight: 400;
+        color: black;
+        margin: 0;
+        text-align: justify;
+        font-size: 0.9rem;
+        line-height: 1.6;
+      }
+      .room-progress {
+        display: flex;
+        justify-content: center;
+        margin: 20px auto;
+        max-width: 600px;
+      }
+      .room-indicator {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin: 0 8px;
+        background-color: #e0e0e0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: 700;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      .room-indicator.active {
+        background: linear-gradient(90deg, var(--blue1), var(--blue2));
+        color: white;
+        transform: scale(1.1);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      }
+      .room-indicator.completed {
+        background-color: #a4f3a4;
+        color: #333;
+      }
+      .navigation-buttons {
+        display: flex;
+        justify-content: space-between;
+        max-width: 600px;
+        margin: 20px auto;
+      }
+      .nav-button {
+        padding: 8px 15px;
+        border: none;
+        border-radius: 5px;
+        background: linear-gradient(90deg, var(--blue1), var(--blue2));
+        color: white;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        opacity: 0.7;
+      }
+      .nav-button:hover {
+        opacity: 1;
+        transform: scale(1.05);
+      }
+      .nav-button:disabled {
+        background: #cccccc;
+        cursor: not-allowed;
+        opacity: 0.5;
+        transform: none;
+      }
+      .room-complete {
+        text-align: center;
+        padding: 20px;
+        max-width: 600px;
+        margin: 20px auto;
+        background: linear-gradient(90deg, var(--blue-light-10), var(--blue-dark-10));
+        border-radius: 10px;
+        display: none;
+        animation: fadeIn 0.6s ease;
+      }
+      .room-complete h3 {
+        color: var(--blue2);
+        margin-top: 0;
+      }
+      .game-complete {
+        text-align: center;
+        padding: 20px;
+        max-width: 600px;
+        margin: 20px auto;
+        background: linear-gradient(90deg, rgba(164, 243, 164, 0.3), rgba(102, 103, 244, 0.1));
+        border-radius: 10px;
+        display: none;
+        animation: fadeIn 0.6s ease;
+      }
+      .game-complete h2 {
+        color: var(--blue2);
+        margin-top: 0;
+      }
+      /* Word Puzzle Styles */
+      .word-puzzle-container {
+        margin: 30px auto;
+        max-width: 800px;
+      }
+      .word-puzzle {
+        margin-bottom: 30px;
+        background: rgba(255, 255, 255, 0.8);
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      }
+      .puzzle-title {
+        font-weight: 700;
+        color: var(--blue2);
+        margin-bottom: 15px;
+      }
+      .target-sentence {
+        background: #f5f5f5;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        min-height: 60px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+      .word-bank {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 20px;
+      }
+      .word {
+        background: linear-gradient(90deg, var(--blue1), var(--blue2));
+        color: white;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-weight: 600;
+        cursor: pointer;
+        user-select: none;
+        transition: all 0.2s ease;
+      }
+      .word:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      }
+      .placed-word {
+        background: #f0f0f0;
+        color: #333;
+        padding: 6px 12px;
+        border-radius: 4px;
+        margin: 2px;
+        display: inline-block;
+        cursor: pointer;
+      }
+      .placed-word:hover {
+        background: #e0e0e0;
+      }
+      .clear-button {
+        background: #f3a4a4;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        margin-right: 10px;
+      }
+      .clear-button:hover {
+        background: #f27c7c;
+      }
+      .check-button {
+        background: #a4f3a4;
+        color: #333;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s ease;
+      }
+      .check-button:hover {
+        background: #7ce67c;
+      }
+      .puzzle-result {
+        margin-top: 15px;
+        padding: 10px;
+        border-radius: 5px;
+        text-align: center;
+        font-weight: 600;
+        display: none;
+      }
+      .puzzle-result.correct {
+        background-color: var(--correct);
+        color: #226622;
+      }
+      .puzzle-result.incorrect {
+        background-color: var(--incorrect);
+        color: #662222;
+      }
+      /* Sentence Ordering Styles */
+      .sentence-puzzle-container {
+        margin: 30px auto;
+        max-width: 800px;
+        display: none;
+      }
+      .sentence-list {
+        list-style: none;
+        padding: 0;
+        margin: 20px 0;
+      }
+      .sentence-item {
+        background: linear-gradient(90deg, var(--blue-light-10), var(--blue-dark-10));
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        cursor: move;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      }
+      .sentence-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      }
+      .sentence-item.dragging {
+        opacity: 0.5;
+      }
+      .sentence-puzzle-buttons {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+      }
+      @keyframes fadeIn {
+        0% {opacity: 0; transform: translateY(20px);}
+        100% {opacity: 1; transform: translateY(0);}
+      }
+      @keyframes pulse {
+        0% {transform: scale(1);}
+        50% {transform: scale(1.05);}
+        100% {transform: scale(1);}
+      }
+      /* Feedback message styles */
+      .feedback-message {
+        padding: 15px;
+        border-radius: 8px;
+        margin: 20px auto;
+        max-width: 600px;
+        text-align: center;
+        font-weight: 600;
+        animation: fadeIn 0.6s ease;
+        display: none;
+      }
+      .feedback-message.success {
+        background-color: var(--correct);
+        color: #226622;
+      }
+      .feedback-message.error {
+        background-color: var(--incorrect);
+        color: #662222;
+      }
+      .original-quote {
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 15px 0;
+        font-style: italic;
+        color: #555;
+        box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+        display: none;
+      }
+      @media (max-width: 768px) {
+        .header {
+          padding: 60px 20px;
+          font-size: 2.5rem;
+        }
+        .word-bank {
+          gap: 5px;
+        }
+        .word, .placed-word {
+          padding: 5px 8px;
+          font-size: 0.9rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      THE BRAHMAN<br>PUZZLE CHALLENGE
+    </div>
+    <div class="main">
+      <nav class="navbar">
+        <ul>
+          <li><a href="https://tmob-9-1.vercel.app/">Escape Room</a></li>
+          <li><a href="https://tmob-9-1.vercel.app/a2.html">Memory Game</a></li>
+          <li><a href="https://tmob-9-1.vercel.app/a3.html">Murder Mystery</a></li>
+          <li><a href="https://tmob-9-1.vercel.app/a4.html">Puzzle Chalenge</a></li>
+          <li><a href="https://tmob-9-1.vercel.app/a5.html">Who Said It?</a></li>
+        </ul>
+      </nav>
+      <div class="content">
+        <div class="section-title" id="room-title-box"></div>
+        <div class="room-progress" id="room-progress"></div>
+        <div class="excerpt-box">
+          <h3 id="room-title-box"></h3>
+          <p id="room-excerpt"></p>
+        </div>
+
+        <!-- Word Puzzle Container (Challenge 1) -->
+        <div class="word-puzzle-container" id="word-puzzle-container">
+          <div class="word-puzzle" id="current-puzzle">
+            <div class="puzzle-title" id="puzzle-title"></div>
+            <div class="target-sentence" id="target-sentence"></div>
+            <div class="word-bank" id="word-bank"></div>
+            <div>
+              <button class="clear-button" id="clear-button">Clear</button>
+              <button class="check-button" id="check-button">Check Answer</button>
+            </div>
+            <div class="puzzle-result" id="puzzle-result"></div>
+            <div class="original-quote" id="original-quote"></div>
+          </div>
+        </div>
+
+        <!-- Sentence Ordering Container (Challenge 2) -->
+        <div class="sentence-puzzle-container" id="sentence-puzzle-container">
+          <div class="word-puzzle">
+            <div class="puzzle-title" id="sentence-puzzle-title"></div>
+            <ul class="sentence-list" id="sentence-list"></ul>
+            <div class="sentence-puzzle-buttons">
+              <button class="check-button" id="check-order-button">Check Order</button>
+            </div>
+            <div class="puzzle-result" id="sentence-result"></div>
+          </div>
+        </div>
+
+        <div class="feedback-message" id="feedback-message"></div>
+        <div class="navigation-buttons">
+          <button class="nav-button" id="prev-button" disabled>Previous</button>
+          <button class="nav-button" id="next-button" disabled>Next</button>
+        </div>
+        <div class="room-complete" id="room-complete">
+          <h3>Challenge Completed!</h3>
+          <p>You've successfully completed this challenge.</p>
+          <button class="nav-button" id="next-room-button">Proceed to Next Challenge</button>
+        </div>
+        <div class="game-complete" id="game-complete">
+          <h2>Congratulations!</h2>
+          <p>You've mastered the Mystery of Brahman puzzle challenges!</p>
+          <p>Your understanding of these ancient texts has deepened through your journey.</p>
+          <button class="nav-button" id="restart-button">Start Again</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Game data for both challenges
+      const gameData = [
+        // Updated Game Data for Challenge 1: Shuffled Quotes (Each quote is one sentence)
+        {
+          title: "CHALLENGE 1: THE SHUFFLED QUOTES",
+          description: "Rearrange the words of each famous quote from the Mystery of Brahman to reveal the ancient wisdom.",
+          puzzles: [
+            {
+              title: "Quote 1",
+              correctSentence: "Father, explain to me the mystery of Brahman.",
+              hint: "Bhrigu’s first request."
+            },
+            {
+              title: "Quote 2",
+              correctSentence: "Seek to know him from whom all beings have come, by whom they all live, and unto whom these all return.",
+              hint: "The father’s instruction on the origin and destiny of all beings."
+            },
+            {
+              title: "Quote 3",
+              correctSentence: "Father, explain further to me the mystery of Brahman.",
+              hint: "Bhrigu’s second request."
+            },
+            {
+              title: "Quote 4",
+              correctSentence: "Seek to know Brahman by tapas, by prayer, because Brahman is prayer.",
+              hint: "The essence of spiritual practice."
+            },
+            {
+              title: "Quote 5",
+              correctSentence: "FOR FROM JOY ALL BEINGS HAVE COME, BY JOY THEY ALL LIVE, AND UNTO JOY THEY ALL RETURN.",
+              hint: "The ultimate realization of joy."
+            }
+          ]
+        },
+        {
+          title: "CHALLENGE 2: THE SENTENCE ORDER",
+          description: "Drag and arrange each group of 5 sentences into the correct order to reconstruct the story of Bhrigu’s quest for Brahman.",
+          sentenceGroups: [
+            {
+              title: "Group 1: The Beginning",
+              sentences: [
+                "Once Bhrigu Varuni went to his father Varuna and said: “Father, explain to me the mystery of Brahman.”",
+                "Then his father spoke to him who hears, of the mind that knows, and of the one who sees, of the one who hears, of the mind that knows, and of the one who speaks.",
+                "And he further said to him: “Seek to know him from whom all beings have come, by whom they all live, and unto whom these all return. He is Brahman.”",
+                "So Bhrigu went and practiced tapas, spiritual prayer.",
+                "Then he thought that Brahman was the food of the earth: for from earth all beings have come, by food of the earth they all live, and unto the earth they all return."
+              ]
+            },
+            {
+              title: "Group 2: The First Exchange",
+              sentences: [
+                "Then he went again to his father Varuna and said: “Father, explain further to me the mystery of Brahman.”",
+                "To him his father answered: “Seek to know Brahman by tapas, by prayer, because Brahman is prayer.”",
+                "So Bhrigu went and practiced tapas, spiritual prayer.",
+                "Then he thought that Brahman was life: for from life all beings have come, by life they all live, and unto life they all return.",
+                "After this he went again to his father Varuna and said: “Father, explain further to me the mystery of Brahman.”"
+              ]
+            },
+            {
+              title: "Group 3: The Repeated Guidance",
+              sentences: [
+                "To him his father answered: “Seek to know Brahman by tapas, by prayer, because Brahman is prayer.”",
+                "So Bhrigu went and practiced tapas, spiritual prayer.",
+                "Then he thought that Brahman was mind: for from mind all beings have come, by mind they all live, and unto mind they all return.",
+                "After this he went again to his father Varuna and said: “Father, explain further to me the mystery of Brahman.”",
+                "To him his father answered: “Seek to know Brahman by tapas, by prayer, because Brahman is prayer.”"
+              ]
+            },
+            {
+              title: "Group 4: The Culmination",
+              sentences: [
+                "So Bhrigu went and practiced tapas, spiritual prayer.",
+                "Then he thought that Brahman was reason: for from reason all beings have come, by reason they all live, and unto reason they all return.",
+                "He went again to his father, asked the same question, and received the same answer.",
+                "So Bhrigu went and practiced tapas, spiritual prayer.",
+                "And then he saw that Brahman is joy: FOR FROM JOY ALL BEINGS HAVE COME, BY JOY THEY ALL LIVE, AND UNTO JOY THEY ALL RETURN."
+              ]
+            }
+          ]
+        }
+      ];
+
+      // Game state
+      let currentChallenge = 0;
+      let currentPuzzle = 0;
+      let challengesCompleted = [false, false];
+      let puzzlesCompleted = [
+        Array(gameData[0].puzzles.length).fill(false),
+        Array(gameData[1].sentenceGroups.length).fill(false)
+      ];
+
+      // DOM elements
+      const roomTitleBox = document.getElementById("room-title-box");
+      const roomExcerpt = document.getElementById("room-excerpt");
+      const roomProgress = document.getElementById("room-progress");
+      const prevButton = document.getElementById("prev-button");
+      const nextButton = document.getElementById("next-button");
+      const roomCompleteEl = document.getElementById("room-complete");
+      const nextRoomButton = document.getElementById("next-room-button");
+      const gameCompleteEl = document.getElementById("game-complete");
+      const restartButton = document.getElementById("restart-button");
+      const wordPuzzleContainer = document.getElementById("word-puzzle-container");
+      const sentencePuzzleContainer = document.getElementById("sentence-puzzle-container");
+      const feedbackMessage = document.getElementById("feedback-message");
+
+      // Word puzzle elements
+      const puzzleTitle = document.getElementById("puzzle-title");
+      const targetSentence = document.getElementById("target-sentence");
+      const wordBank = document.getElementById("word-bank");
+      const clearButton = document.getElementById("clear-button");
+      const checkButton = document.getElementById("check-button");
+      const puzzleResult = document.getElementById("puzzle-result");
+      const originalQuote = document.getElementById("original-quote");
+
+      // Sentence ordering elements
+      const sentencePuzzleTitle = document.getElementById("sentence-puzzle-title");
+      const sentenceList = document.getElementById("sentence-list");
+      const checkOrderButton = document.getElementById("check-order-button");
+      const sentenceResult = document.getElementById("sentence-result");
+
+      // For drag and drop in sentence ordering
+      let draggedItem = null;
+      function handleDragStart(e) {
+        draggedItem = e.target;
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("text/plain", "");
+        e.target.classList.add("dragging");
+      }
+      function handleDragOver(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+      }
+      function handleDrop(e) {
+        e.preventDefault();
+        if (draggedItem && draggedItem !== e.target && e.target.classList.contains("sentence-item")) {
+          sentenceList.insertBefore(draggedItem, e.target);
+        }
+      }
+      function handleDragEnd(e) {
+        e.target.classList.remove("dragging");
+        draggedItem = null;
+      }
+
+      // Initialize game
+      function initGame() {
+        roomTitleBox.textContent = gameData[currentChallenge].title;
+        roomExcerpt.textContent = gameData[currentChallenge].description;
+        roomCompleteEl.style.display = "none";
+        feedbackMessage.style.display = "none";
+
+        // Create room/challenge indicators
+        roomProgress.innerHTML = "";
+        for (let i = 0; i < gameData.length; i++) {
+          const roomIndicator = document.createElement("div");
+          roomIndicator.className = "room-indicator";
+          roomIndicator.textContent = i + 1;
+          if (i === currentChallenge) {
+            roomIndicator.classList.add("active");
+          } else if (challengesCompleted[i]) {
+            roomIndicator.classList.add("completed");
+          }
+          roomProgress.appendChild(roomIndicator);
+        }
+
+        // Show appropriate container based on challenge
+        if (currentChallenge === 0) {
+          wordPuzzleContainer.style.display = "block";
+          sentencePuzzleContainer.style.display = "none";
+          loadWordPuzzle(currentPuzzle);
+        } else {
+          wordPuzzleContainer.style.display = "none";
+          sentencePuzzleContainer.style.display = "block";
+          loadSentencePuzzle(currentPuzzle);
+        }
+        updateNavigationButtons();
+      }
+
+      // Challenge 1: Word Puzzle functions
+      function loadWordPuzzle(puzzleIndex) {
+        const puzzle = gameData[0].puzzles[puzzleIndex];
+        puzzleTitle.textContent = puzzle.title + " (Quote " + (puzzleIndex + 1) + " of " + gameData[0].puzzles.length + ")";
+        targetSentence.innerHTML = "";
+        wordBank.innerHTML = "";
+        puzzleResult.style.display = "none";
+        originalQuote.style.display = "none";
+        clearButton.disabled = false;
+        checkButton.disabled = false;
+
+        if (puzzlesCompleted[0][puzzleIndex]) {
+          showCompletedWordPuzzle(puzzle);
+          return;
+        }
+        const words = puzzle.correctSentence.split(' ');
+        const shuffledWords = [...words].sort(() => Math.random() - 0.5);
+        shuffledWords.forEach(word => {
+          const wordEl = document.createElement("div");
+          wordEl.className = "word";
+          wordEl.textContent = word;
+          wordEl.addEventListener("click", () => {
+            if (wordEl.parentNode === wordBank) {
+              moveWordToTarget(wordEl);
+            }
+          });
+          wordBank.appendChild(wordEl);
+        });
+        clearButton.onclick = clearTargetSentence;
+        checkButton.onclick = () => checkWordPuzzle(puzzle);
+      }
+
+      function moveWordToTarget(wordEl) {
+        const placedWord = document.createElement("div");
+        placedWord.className = "placed-word";
+        placedWord.textContent = wordEl.textContent;
+        placedWord.addEventListener("click", () => {
+          const newWord = document.createElement("div");
+          newWord.className = "word";
+          newWord.textContent = placedWord.textContent;
+          newWord.addEventListener("click", () => moveWordToTarget(newWord));
+          wordBank.appendChild(newWord);
+          placedWord.remove();
+        });
+        targetSentence.appendChild(placedWord);
+        wordEl.remove();
+      }
+
+      function clearTargetSentence() {
+        const placedWords = targetSentence.querySelectorAll(".placed-word");
+        placedWords.forEach(word => {
+          const newWord = document.createElement("div");
+          newWord.className = "word";
+          newWord.textContent = word.textContent;
+          newWord.addEventListener("click", () => moveWordToTarget(newWord));
+          wordBank.appendChild(newWord);
+        });
+        targetSentence.innerHTML = "";
+        puzzleResult.style.display = "none";
+      }
+
+      function checkWordPuzzle(puzzle) {
+        const placedWords = targetSentence.querySelectorAll(".placed-word");
+        const currentSentence = Array.from(placedWords)
+        .map(word => word.textContent)
+        .join(' ');
+        if (currentSentence === puzzle.correctSentence) {
+          puzzlesCompleted[0][currentPuzzle] = true;
+          puzzleResult.textContent = "Correct! You've successfully arranged this quote.";
+          puzzleResult.className = "puzzle-result correct";
+          puzzleResult.style.display = "block";
+          originalQuote.textContent = "Original quote: " + puzzle.correctSentence;
+          originalQuote.style.display = "block";
+          clearButton.disabled = true;
+          checkButton.disabled = true;
+
+          // If this is the last quote, mark the challenge as complete and display the next challenge button.
+          if (currentPuzzle === gameData[0].puzzles.length - 1) {
+            challengesCompleted[0] = true;
+            roomCompleteEl.style.display = "block";
+            updateRoomIndicator(0);
+          } else {
+            // Otherwise, enable the "Next Quote" button.
+            nextButton.disabled = false;
+          }
+        } else {
+          puzzleResult.textContent = "Not quite right. Try again!";
+          puzzleResult.className = "puzzle-result incorrect";
+          puzzleResult.style.display = "block";
+        }
+      }
+
+
+      function showCompletedWordPuzzle(puzzle) {
+        const words = puzzle.correctSentence.split(' ');
+        words.forEach(word => {
+          const wordEl = document.createElement("div");
+          wordEl.className = "placed-word";
+          wordEl.textContent = word;
+          targetSentence.appendChild(wordEl);
+        });
+        clearButton.disabled = true;
+        checkButton.disabled = true;
+        puzzleResult.textContent = "Correct! You've successfully arranged this quote.";
+        puzzleResult.className = "puzzle-result correct";
+        puzzleResult.style.display = "block";
+        originalQuote.textContent = "Original quote: " + puzzle.correctSentence;
+        originalQuote.style.display = "block";
+        nextButton.disabled = (currentPuzzle === gameData[0].puzzles.length - 1);
+      }
+
+      // Challenge 2: Sentence Ordering functions
+      function loadSentencePuzzle(puzzleIndex) {
+        const group = gameData[1].sentenceGroups[puzzleIndex];
+        sentencePuzzleTitle.textContent = group.title + " (Group " + (puzzleIndex + 1) + " of " + gameData[1].sentenceGroups.length + ")";
+        sentenceList.innerHTML = "";
+        sentenceResult.style.display = "none";
+        checkOrderButton.disabled = false;
+
+        if (puzzlesCompleted[1][puzzleIndex]) {
+          showCompletedSentencePuzzle(group);
+          return;
+        }
+        const shuffledSentences = [...group.sentences].sort(() => Math.random() - 0.5);
+        shuffledSentences.forEach(sentence => {
+          const sentenceItem = document.createElement("li");
+          sentenceItem.className = "sentence-item";
+          sentenceItem.textContent = sentence;
+          sentenceItem.setAttribute("draggable", "true");
+          sentenceItem.addEventListener("dragstart", handleDragStart);
+          sentenceItem.addEventListener("dragover", handleDragOver);
+          sentenceItem.addEventListener("drop", handleDrop);
+          sentenceItem.addEventListener("dragend", handleDragEnd);
+          sentenceList.appendChild(sentenceItem);
+        });
+        checkOrderButton.onclick = () => checkSentencePuzzle(group, puzzleIndex);
+      }
+
+      function checkSentencePuzzle(group, puzzleIndex) {
+        const currentOrder = Array.from(sentenceList.children).map(li => li.textContent);
+        let isCorrect = true;
+        for (let i = 0; i < group.sentences.length; i++) {
+          if (currentOrder[i] !== group.sentences[i]) {
+            isCorrect = false;
+            break;
+          }
+        }
+        if (isCorrect) {
+          puzzlesCompleted[1][puzzleIndex] = true;
+          sentenceResult.textContent = "Correct order! Well done.";
+          sentenceResult.className = "puzzle-result correct";
+          sentenceResult.style.display = "block";
+          sentenceList.style.pointerEvents = "none";
+          checkOrderButton.disabled = true;
+        } else {
+          sentenceResult.textContent = "Incorrect order. Try again!";
+          sentenceResult.className = "puzzle-result incorrect";
+          sentenceResult.style.display = "block";
+        }
+      }
+
+      function showCompletedSentencePuzzle(group) {
+        group.sentences.forEach(sentence => {
+          const li = document.createElement("li");
+          li.className = "sentence-item";
+          li.textContent = sentence;
+          sentenceList.appendChild(li);
+        });
+        sentenceList.style.pointerEvents = "none";
+        checkOrderButton.disabled = true;
+      }
+
+      function updateRoomIndicator(challengeIndex) {
+        const roomIndicators = document.querySelectorAll(".room-indicator");
+        if (roomIndicators[challengeIndex]) {
+          roomIndicators[challengeIndex].classList.add("completed");
+        }
+      }
+
+      // Navigation buttons
+      prevButton.onclick = () => {
+        if (currentPuzzle > 0) {
+          currentPuzzle--;
+          if (currentChallenge === 0) {
+            loadWordPuzzle(currentPuzzle);
+          } else {
+            loadSentencePuzzle(currentPuzzle);
+          }
+          updateNavigationButtons();
+        }
+      };
+
+      nextButton.onclick = () => {
+        if (currentChallenge === 0) {
+          if (currentPuzzle < gameData[0].puzzles.length - 1) {
+            currentPuzzle++;
+            loadWordPuzzle(currentPuzzle);
+            updateNavigationButtons();
+          }
+        } else {
+          if (currentPuzzle < gameData[1].sentenceGroups.length - 1) {
+            currentPuzzle++;
+            loadSentencePuzzle(currentPuzzle);
+            updateNavigationButtons();
+          }
+        }
+      };
+
+      nextRoomButton.onclick = () => {
+        if (currentChallenge < gameData.length - 1) {
+          currentChallenge++;
+          currentPuzzle = 0;
+          initGame();
+        } else {
+          gameCompleteEl.style.display = "block";
+        }
+      };
+
+      restartButton.onclick = () => {
+        currentChallenge = 0;
+        currentPuzzle = 0;
+        challengesCompleted = [false, false];
+        puzzlesCompleted = [
+          Array(gameData[0].puzzles.length).fill(false),
+          Array(gameData[1].sentenceGroups.length).fill(false)
+        ];
+        gameCompleteEl.style.display = "none";
+        initGame();
+      };
+
+      function updateNavigationButtons() {
+        if (currentChallenge === 0) {
+          prevButton.disabled = currentPuzzle === 0;
+          // Next button is enabled only if the current puzzle is completed and it's not the last one
+          nextButton.disabled = (currentPuzzle === gameData[0].puzzles.length - 1) || !puzzlesCompleted[0][currentPuzzle];
+          // Set button text to "Next Quote"
+          nextButton.textContent = "Next Quote";
+        } else {
+          prevButton.disabled = currentPuzzle === 0;
+          nextButton.disabled = (currentPuzzle === gameData[1].sentenceGroups.length - 1) || !puzzlesCompleted[1][currentPuzzle];
+          // Set button text to "Next Group"
+          nextButton.textContent = "Next Group";
+        }
+      }
+
+      // Start the game
+      initGame();
+    </script>
+  </body>
+</html>
