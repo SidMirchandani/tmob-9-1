@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>The Mystery of Brahman</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --blue1: #00b0cf;
+        --blue2: #6667f4;
+        --blue-light-10: rgba(0, 176, 207, 0.1);
+        --blue-dark-10: rgba(102, 103, 244, 0.1);
+        --correct: #a4f3a4;
+        --incorrect: #f3a4a4;
+      }
+      body {
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
+        background: white;
+        position: relative;
+      }
+      .header {
+        background: linear-gradient(90deg, var(--blue1), var(--blue2));
+        color: white;
+        padding: 100px 20px;
+        text-align: center;
+        font-weight: 900;
+        font-size: 3.5rem;
+        letter-spacing: 2px;
+        line-height: 1.1;
+        position: relative;
+
+        /* Dotted pattern overlay */
+        background-image: 
+          radial-gradient(rgba(255, 255, 255, 0.2) 1px, transparent 1px),
+          linear-gradient(90deg, var(--blue1), var(--blue2));
+        background-size: 10px 10px, cover;
+      }
+
+      .main {
+        background: white;
+        position: relative;
+        padding: 30px 20px;
+        z-index: 0;
+        overflow: hidden;
+      }
+      .main::before {
+        content: '';
+        position: absolute;
+        width: 600px;
+        height: 600px;
+        border-radius: 50%;
+        background: radial-gradient(circle, #a1daff 0%, transparent 50%, transparent 100%);
+        z-index: -1;
+        top: -300px;
+        left: -300px;
+      }
+      .main::after {
+        content: none;
+      }
+      .content {
+        position: relative;
+        z-index: 1;
+      }
+      .section-title {
+        font-weight: 900;
+        font-size: 1.5rem;
+        color: black;
+        text-align: center;
+        margin-bottom: 10px;
+      }
+      .section-title::after {
+        content: '';
+        display: block;
+        width: 60px;
+        height: 4px;
+        margin: 10px auto;
+        background: linear-gradient(90deg, var(--blue1), var(--blue2));
+        border-radius: 2px;
+      }
+      .excerpt-box {
+        background: linear-gradient(90deg, var(--blue-light-10), var(--blue-dark-10));
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px auto;
+        max-width: 600px;
+      }
+      .excerpt-box h3 {
+        font-weight: 900;
+        color: black;
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-size: 1.2rem;
+        text-align: center;
+      }
+      .excerpt-box p {
+        font-style: italic;
+        font-weight: 400;
+        color: black;
+        margin: 0;
+        text-align: justify;
+        font-size: 0.8rem;
+      }
+      .question {
+        margin-top: 30px;
+        text-align: left;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .question-title {
+        font-weight: 700;
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+      }
+      .question-question {
+        font-style: italic;
+        font-weight: 400;
+        color: black;
+        margin: 0;
+        text-align: justify;
+        font-size: 0.8rem;
+      }
+      .question-options {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .question-options li {
+        font-style: italic;
+        font-size: 0.8rem;
+        font-weight: 400;
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
+        cursor: pointer;
+        margin-left: 0px;
+        transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+      }
+      .question-options li:hover {
+        background-color: #f0f8ff;
+        color: #000;
+        transform: translateX(3px) scale(1.02);
+      }
+      .question-options li.correct {
+        background-color: var(--correct);
+        font-weight: 700;
+        transition: all 0.5s ease;
+      }
+      .question-options li.incorrect {
+        background-color: var(--incorrect);
+        font-weight: 700;
+        transition: all 0.5s ease;
+      }
+      .feedback {
+        margin-top: 10px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        opacity: 0;
+        transform: scale(0.95);
+        transition: all 0.4s ease;
+      }
+      .feedback.visible {
+        opacity: 1;
+        transform: scale(1);
+      }
+      /* Navigation and progress styles */
+      .room-progress {
+        display: flex;
+        justify-content: center;
+        margin: 20px auto;
+        max-width: 600px;
+      }
+      .room-indicator {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin: 0 8px;
+        background-color: #e0e0e0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: 700;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      .room-indicator.active {
+        background: linear-gradient(90deg, var(--blue1), var(--blue2));
+        color: white;
+        transform: scale(1.1);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      }
+      .room-indicator.completed {
+        background-color: #a4f3a4;
+        color: #333;
+      }
+      .question-progress {
+        display: flex;
+        justify-content: center;
+        margin: 15px auto;
+        max-width: 600px;
+      }
+      .question-indicator {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        margin: 0 5px;
+        background-color: #e0e0e0;
+        transition: all 0.3s ease;
+      }
+      .question-indicator.active {
+        background: linear-gradient(90deg, var(--blue1), var(--blue2));
+        transform: scale(1.1);
+      }
+      .question-indicator.completed {
+        background-color: #666666;
+      }
+
+      .navigation-buttons {
+        display: flex;
+        justify-content: space-between;
+        max-width: 600px;
+        margin: 20px auto;
+      }
+      .nav-button {
+        padding: 8px 15px;
+        border: none;
+        border-radius: 5px;
+        background: linear-gradient(90deg, var(--blue1), var(--blue2));
+        color: white;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        opacity: 0.7;
+        font-family: 'Poppins';
+      }
+      .nav-button:hover {
+        opacity: 1;
+        transform: scale(1.05);
+      }
+      .nav-button:disabled {
+        background: #cccccc;
+        cursor: not-allowed;
+        opacity: 0.5;
+        transform: none;
+      }
+      /* Enhanced feedback styles */
+      .feedback-container {
+        max-width: 600px;
+        margin: 15px auto;
+        border-radius: 8px;
+        overflow: hidden;
+        transform-origin: top;
+        transition: all 0.5s ease;
+        max-height: 0;
+      }
+      .feedback-container.visible {
+        max-height: 200px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      }
+      .feedback-content {
+        padding: 15px;
+        display: flex;
+        align-items: flex-start;
+      }
+      .feedback-correct {
+        background-color: rgba(164, 243, 164, 0.3);
+        border-left: 4px solid var(--correct);
+      }
+      .feedback-incorrect {
+        background-color: rgba(243, 164, 164, 0.3);
+        border-left: 4px solid var(--incorrect);
+      }
+      .feedback-icon {
+        font-size: 1.5rem;
+        margin-right: 10px;
+        display: inline-block;
+        animation: bounce 0.6s ease;
+      }
+      .feedback-text {
+        flex: 1;
+      }
+      .feedback-heading {
+        font-weight: 700;
+        margin-bottom: 5px;
+      }
+      .feedback-explanation {
+        font-size: 0.8rem;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: all 0.4s ease 0.1s;
+      }
+      .feedback-container.visible .feedback-explanation {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .room-complete {
+        text-align: center;
+        padding: 20px;
+        max-width: 600px;
+        margin: 20px auto;
+        background: linear-gradient(90deg, var(--blue-light-10), var(--blue-dark-10));
+        border-radius: 10px;
+        display: none;
+        animation: fadeIn 0.6s ease;
+      }
+      .room-complete h3 {
+        color: var(--blue2);
+        margin-top: 0;
+      }
+      .game-complete {
+        text-align: center;
+        padding: 20px;
+        max-width: 600px;
+        margin: 20px auto;
+        background: linear-gradient(90deg, rgba(164, 243, 164, 0.3), rgba(102, 103, 244, 0.1));
+        border-radius: 10px;
+        display: none;
+        animation: fadeIn 0.6s ease;
+      }
+      .game-complete h2 {
+        color: var(--blue2);
+        margin-top: 0;
+      }
+      @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+        40% {transform: translateY(-10px);}
+        60% {transform: translateY(-5px);}
+      }
+      @keyframes fadeIn {
+        0% {opacity: 0; transform: translateY(20px);}
+        100% {opacity: 1; transform: translateY(0);}
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      THE BRAHMAN<br>ESCAPE ROOM
+    </div>
+
+    <div class="main">
+      <div class="content">
+        <div class="section-title">ESCAPE ROOM</div>
+
+        <div class="room-progress" id="room-progress"></div>
+
+        <div class="excerpt-box">
+          <h3>EXCERPT - <span id="room-title">ROOM 1</span></h3>
+          <p id="room-excerpt"></p>
+        </div>
+
+        <div class="question-progress" id="question-progress"></div>
+
+        <div class="question">
+          <div class="question-title" id="q-title"></div>
+          <div class="question-question" id="q-question"></div>
+          <ul class="question-options" id="q-options"></ul>
+        </div>
+
+        <div class="feedback-container" id="feedback-container">
+          <div class="feedback-content" id="feedback-content">
+            <div class="feedback-icon" id="feedback-icon"></div>
+            <div class="feedback-text">
+              <div class="feedback-heading" id="feedback-heading"></div>
+              <div class="feedback-explanation" id="feedback-explanation"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="navigation-buttons">
+          <button class="nav-button" id="prev-button" disabled>Previous</button>
+          <button class="nav-button" id="next-button" disabled>Next</button>
+        </div>
+
+        <div class="room-complete" id="room-complete">
+          <h3>Room Completed!</h3>
+          <p>You've successfully answered all questions in this room.</p>
+          <button class="nav-button" id="next-room-button">Proceed to Next Room</button>
+        </div>
+
+        <div class="game-complete" id="game-complete">
+          <h2>Congratulations!</h2>
+          <p>You've unraveled The Mystery of Brahman and completed all rooms!</p>
+          <p>Your journey through ancient wisdom has led you to enlightenment.</p>
+          <button class="nav-button" id="restart-button">Start Again</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Data for all rooms and questions
+      const gameData = [
+        // Room 1
+        {
+          title: "The Essence",
+          excerpt: "Brahman is the ultimate, unchanging reality or cosmic principle in Hindu philosophy, especially in the Vedanta school. It is conceived as the Absolute Being, the eternal, infinite, and all-embracing principle which is the divine ground of all being. The Upanishads describe Brahman as 'the infinite spirit source, the one which is the source of all, from which all comes and to which all returns.'",
+          questions: [
+            {
+              title: "Question 1",
+              question: "How is Brahman described in Vedanta philosophy?",
+              options: [
+                "As a personal deity with human attributes",
+                "As the ultimate, unchanging reality or cosmic principle",
+                "As one of many gods in the Hindu pantheon",
+                "As a spiritual state achievable through meditation"
+              ],
+              correctAnswer: 1,
+              explanation: "In Vedanta philosophy, Brahman is described as the ultimate, unchanging reality or cosmic principle, not as a personal deity or one of many gods."
+            },
+            {
+              title: "Question 2",
+              question: "According to the Upanishads, what is Brahman's relationship to existence?",
+              options: [
+                "It is separate from the material world",
+                "It is one of many creative forces",
+                "It is the source of all, from which all comes and to which all returns",
+                "It is exclusively concerned with human consciousness"
+              ],
+              correctAnswer: 2,
+              explanation: "The Upanishads describe Brahman as 'the infinite spirit source, the one which is the source of all, from which all comes and to which all returns.'"
+            },
+            {
+              title: "Question 3",
+              question: "Which of the following best describes Brahman's nature?",
+              options: [
+                "Temporary and changing",
+                "Eternal, infinite, and all-embracing",
+                "Limited to the physical universe",
+                "Exclusively male in essence"
+              ],
+              correctAnswer: 1,
+              explanation: "Brahman is conceived as eternal, infinite, and all-embracing - the Absolute Being that is the divine ground of all existence."
+            },
+            {
+              title: "Question 4",
+              question: "In Hindu philosophy, Brahman is most closely associated with which school of thought?",
+              options: [
+                "Vedanta",
+                "Samkhya",
+                "Nyaya",
+                "Mimamsa"
+              ],
+              correctAnswer: 0,
+              explanation: "Brahman is most closely associated with the Vedanta school of Hindu philosophy, where it forms a central concept."
+            },
+            {
+              title: "Question 5",
+              question: "What is Brahman's relationship to divinity in Hindu philosophy?",
+              options: [
+                "It is one deity among many",
+                "It has no connection to divinity",
+                "It is the divine ground of all being",
+                "It represents only the creative aspect of divinity"
+              ],
+              correctAnswer: 2,
+              explanation: "Brahman is conceived as the divine ground of all being, representing the ultimate divine reality that underlies all existence."
+            }
+          ]
+        },
+        // Room 2
+        {
+          title: "Nirguna and Saguna",
+          excerpt: "Hindu philosophy distinguishes between two aspects of Brahman: Nirguna Brahman and Saguna Brahman. Nirguna Brahman is Brahman without attributes or qualities (nir = without, guna = qualities). It is impersonal, beyond all concepts and thoughts, transcending all dualities. Saguna Brahman is Brahman with attributes, the personal God that can be worshipped, represented by deities such as Vishnu, Shiva, or the Divine Mother. These are not two separate entities but two ways of understanding the same ultimate reality.",
+          questions: [
+            {
+              title: "Question 1",
+              question: "What does 'Nirguna' mean when referring to Brahman?",
+              options: [
+                "With form",
+                "Without attributes or qualities",
+                "With personality",
+                "Divine manifestation"
+              ],
+              correctAnswer: 1,
+              explanation: "Nirguna means 'without qualities' (nir = without, guna = qualities), referring to Brahman without attributes, beyond all concepts and dualities."
+            },
+            {
+              title: "Question 2",
+              question: "How is Saguna Brahman typically experienced by devotees?",
+              options: [
+                "Through abstract philosophical contemplation only",
+                "As completely disconnected from deities",
+                "As personal deities that can be worshipped, like Vishnu or Shiva",
+                "Only through denial of the material world"
+              ],
+              correctAnswer: 2,
+              explanation: "Saguna Brahman is experienced as the personal God that can be worshipped, represented by deities such as Vishnu, Shiva, or the Divine Mother."
+            },
+            {
+              title: "Question 3",
+              question: "What is the relationship between Nirguna and Saguna Brahman?",
+              options: [
+                "They are two separate and opposing divine entities",
+                "They are completely unrelated concepts in different traditions",
+                "Nirguna is superior to Saguna in all philosophical schools",
+                "They are two ways of understanding the same ultimate reality"
+              ],
+              correctAnswer: 3,
+              explanation: "Nirguna and Saguna Brahman are not two separate entities but two ways of understanding the same ultimate reality."
+            },
+            {
+              title: "Question 4",
+              question: "Which description best characterizes Nirguna Brahman?",
+              options: [
+                "A deity with specific iconography",
+                "Impersonal, beyond all concepts and thoughts",
+                "The creator aspect of divinity only",
+                "The divine with emotional qualities"
+              ],
+              correctAnswer: 1,
+              explanation: "Nirguna Brahman is impersonal, beyond all concepts and thoughts, transcending all dualities."
+            },
+            {
+              title: "Question 5",
+              question: "What philosophical purpose does the distinction between Nirguna and Saguna serve?",
+              options: [
+                "To create a hierarchy of divine beings",
+                "To separate Hindu traditions from each other",
+                "To accommodate both abstract philosophical understanding and devotional worship",
+                "To distinguish Hindu philosophy from other religious traditions"
+              ],
+              correctAnswer: 2,
+              explanation: "The distinction serves to accommodate both abstract philosophical understanding (Nirguna) and devotional worship practices (Saguna) within Hindu traditions."
+            }
+          ]
+        },
+        // Room 3
+        {
+          title: "Atman and Brahman",
+          excerpt: "One of the great insights of the Upanishads is the identity between Atman (the individual self or soul) and Brahman (the ultimate reality). 'Tat tvam asi' ('That thou art') is one of the Mahavakyas (great sayings) that expresses this non-dual relationship. The Chandogya Upanishad states: 'That which is the finest essence—this whole world has that as its soul. That is Reality. That is Atman. Tat tvam asi.' This recognition of the identity between the individual consciousness and the universal consciousness is considered the highest wisdom in Advaita Vedanta.",
+          questions: [
+            {
+              title: "Question 1",
+              question: "What is the meaning of 'Tat tvam asi'?",
+              options: [
+                "God is great",
+                "That thou art",
+                "The self is illusion",
+                "Worship the divine"
+              ],
+              correctAnswer: 1,
+              explanation: "'Tat tvam asi' is Sanskrit for 'That thou art,' expressing the identity between the individual self (Atman) and the ultimate reality (Brahman)."
+            },
+            {
+              title: "Question 2",
+              question: "In which text is the statement 'That which is the finest essence—this whole world has that as its soul. That is Reality. That is Atman.' found?",
+              options: [
+                "Bhagavad Gita",
+                "Chandogya Upanishad",
+                "Brahma Sutras",
+                "Yoga Sutras"
+              ],
+              correctAnswer: 1,
+              explanation: "This statement is found in the Chandogya Upanishad, one of the principal Upanishads that explores the relationship between Atman and Brahman."
+            },
+            {
+              title: "Question 3",
+              question: "What does the Upanishadic insight about the relationship between Atman and Brahman reveal?",
+              options: [
+                "That they are completely separate entities",
+                "That Atman is inferior to Brahman",
+                "The identity between the individual self and ultimate reality",
+                "That both are illusions to be transcended"
+              ],
+              correctAnswer: 2,
+              explanation: "The great insight of the Upanishads is the identity between Atman (individual self) and Brahman (ultimate reality), revealing their non-dual nature."
+            },
+            {
+              title: "Question 4",
+              question: "What is a 'Mahavakya' in the context of Hindu philosophy?",
+              options: [
+                "A sacred river",
+                "A meditation technique",
+                "A great saying expressing fundamental truth",
+                "A type of ritual"
+              ],
+              correctAnswer: 2,
+              explanation: "A Mahavakya is a 'great saying' that expresses a fundamental truth in Hindu philosophy, particularly in Vedanta."
+            },
+            {
+              title: "Question 5",
+              question: "Which school of Hindu philosophy most emphasizes the non-dual relationship between Atman and Brahman?",
+              options: [
+                "Dvaita (dualism)",
+                "Advaita Vedanta (non-dualism)",
+                "Vishishtadvaita (qualified non-dualism)",
+                "Samkhya"
+              ],
+              correctAnswer: 1,
+              explanation: "Advaita Vedanta (non-dualism) most strongly emphasizes the complete identity or non-dual relationship between Atman and Brahman."
+            }
+          ]
+        },
+        // Room 4
+        {
+          title: "Brahman in Daily Life",
+          excerpt: "The concept of Brahman is not merely philosophical but has practical implications for daily life in Hindu traditions. Through understanding one's true nature as identical with Brahman, one can attain moksha (liberation). This realization leads to a life of dharma (righteous duty), where actions are performed without attachment to results (nishkama karma). Many Hindu practices, from meditation to ritual, are designed to gradually reveal the presence of Brahman in all aspects of existence. The sage sees Brahman everywhere—in the elements, in other beings, and in oneself.",
+          questions: [
+            {
+              title: "Question 1",
+              question: "What is the ultimate goal of realizing one's identity with Brahman?",
+              options: [
+                "Material prosperity",
+                "Social recognition",
+                "Moksha (liberation)",
+                "Divine powers"
+              ],
+              correctAnswer: 2,
+              explanation: "The ultimate goal of realizing one's true nature as identical with Brahman is to attain moksha (liberation) from the cycle of rebirth."
+            },
+            {
+              title: "Question 2",
+              question: "How does understanding Brahman affect one's approach to duty (dharma)?",
+              options: [
+                "It makes one abandon all duties",
+                "It leads to performing actions without attachment to results",
+                "It emphasizes results over process",
+                "It focuses exclusively on ritual duties"
+              ],
+              correctAnswer: 1,
+              explanation: "Understanding one's relationship to Brahman leads to a life of dharma where actions are performed without attachment to results (nishkama karma)."
+            },
+            {
+              title: "Question 3",
+              question: "What is 'nishkama karma' in relation to Brahman?",
+              options: [
+                "The rejection of all action",
+                "Action performed for material gain",
+                "Action performed without attachment to results",
+                "The karma that leads to rebirth"
+              ],
+              correctAnswer: 2,
+              explanation: "Nishkama karma is action performed without attachment to results, a way of living that reflects understanding of Brahman."
+            },
+            {
+              title: "Question 4",
+              question: "According to the excerpt, how does a sage perceive Brahman?",
+              options: [
+                "Only in sacred spaces and temples",
+                "Only during meditation",
+                "Only in other enlightened beings",
+                "Everywhere—in the elements, in other beings, and in oneself"
+              ],
+              correctAnswer: 3,
+              explanation: "The sage sees Brahman everywhere—in the elements, in other beings, and in oneself, recognizing the divine presence throughout existence."
+            },
+            {
+              title: "Question 5",
+              question: "What is the practical purpose of Hindu practices like meditation and ritual in relation to Brahman?",
+              options: [
+                "To earn divine favor",
+                "To gradually reveal the presence of Brahman in all aspects of existence",
+                "To separate the sacred from the mundane",
+                "To achieve material success"
+              ],
+              correctAnswer: 1,
+              explanation: "Many Hindu practices, from meditation to ritual, are designed to gradually reveal the presence of Brahman in all aspects of existence."
+            }
+          ]
+        },
+        // Room 5
+        {
+          title: "Beyond Concepts",
+          excerpt: "Brahman ultimately transcends all conceptual understanding. The Mandukya Upanishad describes it as 'beyond thought,' while the Taittiriya Upanishad states, 'Words and mind go to him, but reach him not and return.' This ineffability is often expressed through the Sanskrit phrase 'neti neti' ('not this, not this'), indicating that Brahman cannot be limited by any description. Even the distinction between being and non-being does not apply to Brahman. Yet paradoxically, this reality that cannot be conceptualized is said to be more immediate and intimate than one's own self—it is the very ground of awareness itself.",
+          questions: [
+            {
+              title: "Question 1",
+              question: "How does the Mandukya Upanishad describe Brahman?",
+              options: [
+                "As easily comprehensible",
+                "As having specific attributes",
+                "As beyond thought",
+                "As identical to the material world"
+              ],
+              correctAnswer: 2,
+              explanation: "The Mandukya Upanishad describes Brahman as 'beyond thought,' indicating its transcendence of conceptual understanding."
+            },
+            {
+              title: "Question 2",
+              question: "What does the Sanskrit phrase 'neti neti' mean and imply about Brahman?",
+              options: [
+                "'Yes, indeed' - confirming Brahman's attributes",
+                "'Not this, not this' - indicating Brahman cannot be limited by any description",
+                "'This is it' - pointing to specific manifestations of Brahman",
+                "'Beyond here' - referring to Brahman's location"
+              ],
+              correctAnswer: 1,
+              explanation: "'Neti neti' means 'not this, not this,' implying that Brahman transcends all descriptions and conceptual limitations."
+            },
+            {
+              title: "Question 3",
+              question: "According to the Taittiriya Upanishad, what happens when words and mind approach Brahman?",
+              options: [
+                "They fully comprehend Brahman",
+                "They become enlightened",
+                "They reach him not and return",
+                "They dissolve into pure consciousness"
+              ],
+              correctAnswer: 2,
+              explanation: "The Taittiriya Upanishad states that 'Words and mind go to him, but reach him not and return,' indicating Brahman's transcendence of linguistic and mental comprehension."
+            },
+            {
+              title: "Question 4",
+              question: "What fundamental distinction does not apply to Brahman, according to the excerpt?",
+              options: [
+                "Sacred and profane",
+                "Good and evil",
+                "Being and non-being",
+                "Material and spiritual"
+              ],
+              correctAnswer: 2,
+              explanation: "Even the distinction between being and non-being does not apply to Brahman, as it transcends such dualistic concepts."
+            },
+            {
+              title: "Question 5",
+              question: "Despite Brahman's ineffability, what paradoxical quality does it possess?",
+              options: [
+                "It is completely detached from human experience",
+                "It is more immediate and intimate than one's own self",
+                "It exists only in special moments of insight",
+                "It can only be known through specific rituals"
+              ],
+              correctAnswer: 1,
+              explanation: "Paradoxically, this reality that cannot be conceptualized is said to be more immediate and intimate than one's own self—it is the very ground of awareness itself."
+            }
+          ]
+        }
+      ];
+
+      // Game state
+      let currentRoom = 0;
+      let currentQuestion = 0;
+      let roomsCompleted = Array(gameData.length).fill(false);
+      // Track if a question has been answered (true/false)
+      let questionsAnswered = gameData.map(room => Array(room.questions.length).fill(false));
+      // Store the index of the user's selected answer (or null if unanswered)
+      let userAnswers = gameData.map(room => Array(room.questions.length).fill(null));
+
+      // DOM elements
+      const roomTitle = document.getElementById("room-title");
+      const roomExcerpt = document.getElementById("room-excerpt");
+      const qTitle = document.getElementById("q-title");
+      const qQuestion = document.getElementById("q-question");
+      const qOptions = document.getElementById("q-options");
+      const roomProgress = document.getElementById("room-progress");
+      const questionProgress = document.getElementById("question-progress");
+      const prevButton = document.getElementById("prev-button");
+      const nextButton = document.getElementById("next-button");
+      const feedbackContainer = document.getElementById("feedback-container");
+      const feedbackContent = document.getElementById("feedback-content");
+      const feedbackIcon = document.getElementById("feedback-icon");
+      const feedbackHeading = document.getElementById("feedback-heading");
+      const feedbackExplanation = document.getElementById("feedback-explanation");
+      const roomCompleteEl = document.getElementById("room-complete");
+      const nextRoomButton = document.getElementById("next-room-button");
+      const gameCompleteEl = document.getElementById("game-complete");
+      const restartButton = document.getElementById("restart-button");
+
+      // Initialize game
+      function initGame() {
+        // Create room indicators
+        roomProgress.innerHTML = "";
+        for (let i = 0; i < gameData.length; i++) {
+          const roomIndicator = document.createElement("div");
+          roomIndicator.className = "room-indicator";
+          roomIndicator.textContent = i + 1;
+          if (i === currentRoom) {
+            roomIndicator.classList.add("active");
+          } else if (roomsCompleted[i]) {
+            roomIndicator.classList.add("completed");
+          }
+          roomProgress.appendChild(roomIndicator);
+        }
+
+        // Create question indicators
+        questionProgress.innerHTML = "";
+        for (let i = 0; i < gameData[currentRoom].questions.length; i++) {
+          const questionIndicator = document.createElement("div");
+          questionIndicator.className = "question-indicator";
+          if (i === currentQuestion) {
+            questionIndicator.classList.add("active");
+          } else if (questionsAnswered[currentRoom][i]) {
+            questionIndicator.classList.add("completed");
+          }
+          questionProgress.appendChild(questionIndicator);
+        }
+
+        // Load room content
+        roomTitle.textContent = "ROOM " + (currentRoom + 1) + ": " + gameData[currentRoom].title;
+        roomExcerpt.textContent = gameData[currentRoom].excerpt;
+
+        // Load question
+        loadQuestion(gameData[currentRoom].questions[currentQuestion]);
+
+        // Update navigation buttons
+        updateNavigationButtons();
+      }
+
+      function loadQuestion(questionData) {
+        qTitle.textContent = questionData.title + " - Room " + (currentRoom + 1);
+        qQuestion.textContent = questionData.question;
+        qOptions.innerHTML = "";
+
+        // Hide feedback
+        feedbackContainer.classList.remove("visible");
+
+        // If question has been answered, display previous selection and feedback
+        if (questionsAnswered[currentRoom][currentQuestion]) {
+          const userAnswer = userAnswers[currentRoom][currentQuestion];
+          const isCorrect = userAnswer === questionData.correctAnswer;
+          questionData.options.forEach((option, index) => {
+            const li = document.createElement("li");
+            li.textContent = option;
+            if (index === questionData.correctAnswer) {
+              li.classList.add("correct");
+            }
+            if (userAnswer !== null && index === userAnswer && !isCorrect) {
+              li.classList.add("incorrect");
+            }
+            qOptions.appendChild(li);
+          });
+          showFeedback(isCorrect, questionData.explanation);
+        } else {
+          // Create clickable options for unanswered questions
+          questionData.options.forEach((option, index) => {
+            const li = document.createElement("li");
+            li.textContent = option;
+            li.addEventListener("click", () => handleAnswer(li, index, questionData.correctAnswer, questionData.explanation));
+            qOptions.appendChild(li);
+          });
+        }
+      }
+
+      function handleAnswer(selectedLi, index, correctIndex, explanation) {
+        const allLis = document.querySelectorAll("#q-options li");
+        const isCorrect = index === correctIndex;
+
+        // Disable all further clicks
+        allLis.forEach(li => {
+          li.style.pointerEvents = "none";
+        });
+
+        if (isCorrect) {
+          selectedLi.classList.add("correct");
+        } else {
+          selectedLi.classList.add("incorrect");
+          allLis[correctIndex].classList.add("correct"); // highlight correct one
+        }
+
+        // Mark question as answered and store the user answer
+        questionsAnswered[currentRoom][currentQuestion] = true;
+        userAnswers[currentRoom][currentQuestion] = index;
+
+        // Update question indicators
+        const indicators = document.querySelectorAll(".question-indicator");
+        indicators[currentQuestion].classList.add("completed");
+
+        // Show enhanced feedback
+        showFeedback(isCorrect, explanation);
+
+        // Check if all questions in room are answered
+        checkRoomCompletion();
+
+        // Update navigation buttons
+        updateNavigationButtons();
+      }
+
+      function showFeedback(isCorrect, explanation) {
+        // Reset classes
+        feedbackContainer.className = "feedback-container";
+        feedbackContent.className = "feedback-content";
+
+        if (isCorrect) {
+          feedbackContent.classList.add("feedback-correct");
+          feedbackIcon.textContent = "✓";
+          feedbackHeading.textContent = "Correct!";
+        } else {
+          feedbackContent.classList.add("feedback-incorrect");
+          feedbackIcon.textContent = "✗";
+          feedbackHeading.textContent = "Incorrect";
+        }
+
+        feedbackExplanation.textContent = explanation;
+
+        // Show with animation
+        setTimeout(() => {
+          feedbackContainer.classList.add("visible");
+        }, 300);
+      }
+
+      function updateNavigationButtons() {
+        // Previous button is disabled on the first question
+        prevButton.disabled = currentQuestion === 0;
+
+        // For non-last questions, enable Next only if answered.
+        // On the last question, disable Next so that users use the Next Room button.
+        if (currentQuestion === gameData[currentRoom].questions.length - 1) {
+          nextButton.disabled = true;
+        } else {
+          nextButton.disabled = !questionsAnswered[currentRoom][currentQuestion];
+        }
+      }
+
+      function checkRoomCompletion() {
+        const allAnswered = questionsAnswered[currentRoom].every(q => q === true);
+
+        if (allAnswered) {
+          roomsCompleted[currentRoom] = true;
+
+          // Update room indicators
+          const roomIndicators = document.querySelectorAll(".room-indicator");
+          roomIndicators[currentRoom].classList.add("completed");
+
+          // Show room complete message if not last room; if last, show game complete
+          if (currentRoom < gameData.length - 1) {
+            roomCompleteEl.style.display = "block";
+          } else {
+            const allRoomsCompleted = roomsCompleted.every(r => r === true);
+            if (allRoomsCompleted) {
+              gameCompleteEl.style.display = "block";
+            }
+          }
+        }
+      }
+
+      // Event Listeners
+      prevButton.addEventListener("click", () => {
+        if (currentQuestion > 0) {
+          currentQuestion--;
+          loadQuestion(gameData[currentRoom].questions[currentQuestion]);
+
+          // Update question indicators
+          const indicators = document.querySelectorAll(".question-indicator");
+          indicators.forEach((indicator, index) => {
+            indicator.classList.remove("active");
+            if (index === currentQuestion) {
+              indicator.classList.add("active");
+            }
+          });
+
+          updateNavigationButtons();
+        }
+      });
+
+      nextButton.addEventListener("click", () => {
+        if (currentQuestion < gameData[currentRoom].questions.length - 1) {
+          currentQuestion++;
+          loadQuestion(gameData[currentRoom].questions[currentQuestion]);
+
+          // Update question indicators
+          const indicators = document.querySelectorAll(".question-indicator");
+          indicators.forEach((indicator, index) => {
+            indicator.classList.remove("active");
+            if (index === currentQuestion) {
+              indicator.classList.add("active");
+            }
+          });
+
+          updateNavigationButtons();
+        }
+      });
+
+      nextRoomButton.addEventListener("click", () => {
+        if (currentRoom < gameData.length - 1) {
+          currentRoom++;
+          currentQuestion = 0;
+          roomCompleteEl.style.display = "none";
+          initGame();
+        }
+      });
+
+      restartButton.addEventListener("click", () => {
+        // Reset game state
+        currentRoom = 0;
+        currentQuestion = 0;
+        roomsCompleted = Array(gameData.length).fill(false);
+        questionsAnswered = gameData.map(room => Array(room.questions.length).fill(false));
+        userAnswers = gameData.map(room => Array(room.questions.length).fill(null));
+
+        gameCompleteEl.style.display = "none";
+        initGame();
+      });
+
+      // Start the game
+      initGame();
+    </script>
+  </body>
+</html>
